@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
-/* ── SPOTIO Brand Tokens ── */
 :root {
   --yellow:   #f3c421;
   --navy:     #4750a1;
@@ -44,100 +43,25 @@
 
   --shadow-sm: 0 1px 3px rgba(27,27,27,0.08);
   --shadow-md: 0 4px 12px rgba(27,27,27,0.10);
-  --shadow-lg: 0 8px 24px rgba(27,27,27,0.13);
 
   --font: 'Lato', 'Helvetica Neue', sans-serif;
   --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+html { -webkit-font-smoothing: antialiased; }
 body {
   font-family: var(--font);
   font-size: 15px;
   color: var(--color-text);
   background: var(--color-bg);
-  min-height: 100vh;
+  padding: var(--space-6) var(--space-4);
   line-height: 1.6;
 }
 img, svg { display: block; max-width: 100%; }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; border: none; background: none; }
 h1,h2,h3,h4,h5 { line-height: 1.2; }
-
-/* ── Layout ── */
-.page-wrapper {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: var(--space-8) var(--space-4);
-}
-
-/* ── Header ── */
-.site-header {
-  background: var(--color-primary);
-  padding: var(--space-4) var(--space-8);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  text-decoration: none;
-}
-.logo-mark {
-  width: 36px;
-  height: 36px;
-}
-.logo-text {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: var(--white);
-  letter-spacing: 0.04em;
-}
-.logo-text span { color: var(--yellow); }
-.header-cta {
-  background: var(--yellow);
-  color: var(--black);
-  font-weight: 700;
-  font-size: 0.875rem;
-  padding: var(--space-2) var(--space-5);
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  transition: background var(--transition), transform var(--transition);
-}
-.header-cta:hover { background: #e0b310; transform: translateY(-1px); }
-
-/* ── Hero ── */
-.hero {
-  background: linear-gradient(135deg, var(--navy) 0%, #353b80 100%);
-  color: var(--white);
-  padding: var(--space-10) var(--space-8);
-  border-radius: var(--radius-xl);
-  margin-bottom: var(--space-8);
-  position: relative;
-  overflow: hidden;
-}
-.hero::after {
-  content: '';
-  position: absolute;
-  right: -60px; top: -60px;
-  width: 280px; height: 280px;
-  background: radial-gradient(circle, rgba(243,196,33,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero h1 {
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  font-weight: 900;
-  margin-bottom: var(--space-2);
-}
-.hero h1 em { color: var(--yellow); font-style: normal; }
-.hero p {
-  font-size: 1rem;
-  opacity: 0.85;
-  max-width: 60ch;
-}
 
 /* ── Tabs ── */
 .tab-nav {
@@ -222,7 +146,7 @@ label .hint {
   align-items: center;
   gap: var(--space-2);
 }
-input[type="number"], input[type="range"], select {
+input[type="number"] {
   width: 100%;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -233,7 +157,7 @@ input[type="number"], input[type="range"], select {
   -moz-appearance: textfield;
 }
 input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-input[type="number"]:focus, select:focus {
+input[type="number"]:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(71,80,161,0.15);
@@ -245,12 +169,14 @@ input[type="number"]:focus, select:focus {
   min-width: 60px;
 }
 input[type="range"] {
-  padding: 0;
+  width: 100%;
   height: 4px;
   border-radius: 99px;
   accent-color: var(--color-primary);
   cursor: pointer;
   border: none;
+  background: var(--light-bg);
+  padding: 0;
 }
 .range-row {
   display: flex;
@@ -270,13 +196,13 @@ input[type="range"] {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 @media (max-width: 560px) { .kpi-strip { grid-template-columns: 1fr 1fr; } }
 .kpi {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
-  padding: var(--space-4) var(--space-4);
+  padding: var(--space-4);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
 }
@@ -293,14 +219,46 @@ input[type="range"] {
   font-weight: 900;
   color: var(--color-primary);
   line-height: 1;
-  transition: color 0.3s;
 }
-.kpi-value.highlight { color: var(--yellow); }
-.kpi-sub {
-  font-size: 0.75rem;
-  color: var(--color-faint);
-  margin-top: 2px;
+.kpi-value.highlight { color: var(--yellow); filter: brightness(0.85); }
+
+/* ── Result Badge ── */
+.result-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(71,80,161,0.09);
+  border: 1px solid rgba(71,80,161,0.2);
+  border-radius: 9999px;
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-4);
 }
+.result-badge .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--yellow);
+  flex-shrink: 0;
+}
+
+/* ── Revenue KPIs ── */
+.revenue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+@media (max-width: 560px) { .revenue-grid { grid-template-columns: 1fr 1fr; } }
+.revenue-kpi {
+  background: var(--color-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  color: var(--white);
+}
+.revenue-kpi .kpi-label { color: rgba(255,255,255,0.65); }
+.revenue-kpi .kpi-value { color: var(--yellow); font-size: 1.3rem; }
 
 /* ── Passes Table ── */
 .passes-table-wrap {
@@ -336,7 +294,6 @@ input[type="range"] {
   background: rgba(243,196,33,0.12);
   font-weight: 700;
 }
-.passes-table tbody tr.target-row td { color: var(--black); }
 .passes-table td {
   padding: var(--space-3) var(--space-4);
   color: var(--color-muted);
@@ -357,82 +314,8 @@ input[type="range"] {
   transition: width 0.5s cubic-bezier(0.16,1,0.3,1);
 }
 
-/* ── Revenue Section ── */
-.revenue-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
-}
-@media (max-width: 560px) { .revenue-grid { grid-template-columns: 1fr 1fr; } }
-.revenue-kpi {
-  background: var(--color-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
-  color: var(--white);
-}
-.revenue-kpi .kpi-label { color: rgba(255,255,255,0.65); }
-.revenue-kpi .kpi-value { color: var(--yellow); font-size: 1.3rem; }
-.revenue-kpi .kpi-sub { color: rgba(255,255,255,0.5); }
-
-/* ── CTA Banner ── */
-.cta-banner {
-  background: linear-gradient(135deg, var(--navy) 0%, #353b80 100%);
-  border-radius: var(--radius-xl);
-  padding: var(--space-8);
-  margin-top: var(--space-8);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-  flex-wrap: wrap;
-}
-.cta-banner h3 {
-  color: var(--white);
-  font-size: 1.25rem;
-  font-weight: 900;
-  margin-bottom: var(--space-1);
-}
-.cta-banner p {
-  color: rgba(255,255,255,0.75);
-  font-size: 0.9rem;
-  max-width: 45ch;
-}
-.btn-demo {
-  background: var(--yellow);
-  color: var(--black);
-  font-weight: 900;
-  font-size: 1rem;
-  padding: var(--space-3) var(--space-8);
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background var(--transition), transform var(--transition);
-  display: inline-block;
-}
-.btn-demo:hover { background: #e0b310; transform: translateY(-2px); }
-
-/* ── Result highlight ── */
-.result-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  background: rgba(71,80,161,0.09);
-  border: 1px solid rgba(71,80,161,0.2);
-  border-radius: var(--radius-full, 9999px);
-  padding: var(--space-2) var(--space-4);
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: var(--space-4);
-}
-.result-badge .dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--yellow);
-}
-
-/* ── Section separator ── */
+/* ── Misc ── */
+.divider { border: none; border-top: 1px solid var(--color-border); margin: var(--space-5) 0; }
 .section-label {
   font-size: 0.75rem;
   font-weight: 700;
@@ -441,13 +324,6 @@ input[type="range"] {
   color: var(--color-faint);
   margin: var(--space-5) 0 var(--space-3);
 }
-.divider {
-  border: none;
-  border-top: 1px solid var(--color-border);
-  margin: var(--space-5) 0;
-}
-
-/* ── Tooltip ── */
 .tooltip-wrap { position: relative; display: inline-block; }
 .tooltip-icon {
   width: 14px; height: 14px;
@@ -480,38 +356,9 @@ input[type="range"] {
   pointer-events: none;
 }
 .tooltip-wrap:hover .tooltip-box { display: block; }
-
-/* ── Responsive ── */
-@media (max-width: 480px) {
-  .site-header { padding: var(--space-3) var(--space-4); }
-  .hero { padding: var(--space-6) var(--space-4); }
-  .kpi-strip { grid-template-columns: 1fr 1fr; }
-  .revenue-grid { grid-template-columns: 1fr; }
-  .cta-banner { text-align: left; }
-}
 </style>
 </head>
 <body>
-
-<!-- Header -->
-<header class="site-header">
-  <a href="https://spotio.com" target="_blank" rel="noopener noreferrer" class="logo">
-    <svg class="logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="SPOTIO mark">
-      <circle cx="18" cy="18" r="18" fill="#f3c421"/>
-      <path d="M18 8C13.03 8 9 12.03 9 17c0 6.25 9 19 9 19s9-12.75 9-19c0-4.97-4.03-9-9-9zm0 12.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z" fill="#4750a1"/>
-    </svg>
-    <span class="logo-text">SPOT<span>IO</span></span>
-  </a>
-  <a href="https://spotio.com/demo" target="_blank" rel="noopener noreferrer" class="header-cta">Get a Demo</a>
-</header>
-
-<div class="page-wrapper">
-
-  <!-- Hero -->
-  <div class="hero">
-    <h1>Territory Size &amp; <em>Contact Rate</em> Calculator</h1>
-    <p>Estimate how many passes your team needs to reach 75%+ market penetration — plus your pipeline revenue potential.</p>
-  </div>
 
   <!-- Tab Nav -->
   <div class="tab-nav" role="tablist" aria-label="Calculator mode">
@@ -519,13 +366,10 @@ input[type="range"] {
     <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-b2b" id="tab-b2b" onclick="switchTab('b2b')">B2B / Commercial</button>
   </div>
 
-  <!-- ════════════════════════════════════
-       RESIDENTIAL TAB
-  ════════════════════════════════════ -->
+  <!-- ══ RESIDENTIAL TAB ══ -->
   <div id="panel-residential" class="tab-panel active" role="tabpanel" aria-labelledby="tab-residential">
     <div class="calc-grid">
 
-      <!-- Inputs -->
       <div class="card">
         <div class="card-title">Territory Inputs</div>
 
@@ -539,7 +383,7 @@ input[type="range"] {
 
         <div class="field">
           <label>Average Lot Size
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">0.25 acres = standard quarter-acre residential lot. Use 0.1 for urban/dense, 0.5+ for suburban.</span></span>
+            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">0.25 acres = standard quarter-acre lot. Use 0.1 for urban/dense, 0.5+ for suburban.</span></span>
             <span class="hint">Default 0.25 ac = typical suburban lot</span>
           </label>
           <div class="input-row">
@@ -570,7 +414,7 @@ input[type="range"] {
 
         <div class="field">
           <label>Pass Decay Rate
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Contact rate typically decreases on repeat passes as residents recognize and avoid known canvassers. 8% is a conservative default.</span></span>
+            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Contact rate typically decreases on repeat passes as residents recognize canvassers. 8% is a conservative default.</span></span>
           </label>
           <div class="range-row">
             <input type="range" id="r-decay" min="0" max="25" value="8" oninput="syncRange('r-decay','r-decay-val','%'); calcR()">
@@ -600,7 +444,6 @@ input[type="range"] {
 
       <!-- Results -->
       <div>
-        <!-- KPIs -->
         <div class="kpi-strip">
           <div class="kpi">
             <div class="kpi-label">Houses in Territory</div>
@@ -618,7 +461,6 @@ input[type="range"] {
 
         <div class="result-badge"><span class="dot"></span><span id="r-summary">5 passes · 52 days to reach 75% market penetration</span></div>
 
-        <!-- Revenue KPIs -->
         <div class="revenue-grid">
           <div class="revenue-kpi">
             <div class="kpi-label">Total Contacts (75%)</div>
@@ -634,7 +476,6 @@ input[type="range"] {
           </div>
         </div>
 
-        <!-- Passes Table -->
         <div class="passes-table-wrap">
           <table class="passes-table" aria-label="Pass-by-pass results">
             <thead>
@@ -654,22 +495,18 @@ input[type="range"] {
         </div>
       </div>
     </div>
-  </div><!-- /residential panel -->
+  </div>
 
-
-  <!-- ════════════════════════════════════
-       B2B TAB
-  ════════════════════════════════════ -->
+  <!-- ══ B2B TAB ══ -->
   <div id="panel-b2b" class="tab-panel" role="tabpanel" aria-labelledby="tab-b2b">
     <div class="calc-grid">
 
-      <!-- Inputs -->
       <div class="card">
         <div class="card-title">Territory Inputs</div>
 
         <div class="field">
           <label>Total Accounts in Territory
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Total number of target businesses or prospects in your territory. Pull from CRM, LinkedIn Sales Nav, or a list provider.</span></span>
+            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Total target businesses or prospects. Pull from CRM, LinkedIn Sales Nav, or a list provider.</span></span>
           </label>
           <div class="input-row">
             <input type="number" id="b-accounts" value="300" min="1" oninput="calcB()">
@@ -679,7 +516,7 @@ input[type="range"] {
 
         <div class="field">
           <label>Visits / Calls per Day
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">For field B2B reps, 8–15 in-person visits/day is typical. For inside/phone-based, 30–60 calls is common.</span></span>
+            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Field B2B reps average 8–15 in-person visits/day. Inside/phone-based reps average 30–60 calls/day.</span></span>
           </label>
           <div class="input-row">
             <input type="number" id="b-visits" value="12" min="1" oninput="calcB()">
@@ -689,7 +526,7 @@ input[type="range"] {
 
         <div class="field">
           <label>Base Contact Rate
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">% of accounts reached on first attempt. B2B field average is 30–50%; phone/cold call average is 8–15%.</span></span>
+            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">% of accounts reached on first attempt. B2B field average is 30–50%; cold call average is 8–15%.</span></span>
           </label>
           <div class="range-row">
             <input type="range" id="b-cr" min="5" max="70" value="35" oninput="syncRange('b-cr','b-cr-val','%'); calcB()">
@@ -699,7 +536,7 @@ input[type="range"] {
 
         <div class="field">
           <label>Pass Decay Rate
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Gatekeeper familiarity and avoidance typically reduces effective contact rate on repeat visits. 8% is a conservative baseline.</span></span>
+            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Gatekeeper familiarity reduces effective contact rate on repeat visits. 8% is a conservative baseline.</span></span>
           </label>
           <div class="range-row">
             <input type="range" id="b-decay" min="0" max="25" value="8" oninput="syncRange('b-decay','b-decay-val','%'); calcB()">
@@ -783,7 +620,7 @@ input[type="range"] {
             <div class="kpi-value" id="b-kpi-closes">—</div>
           </div>
           <div class="kpi">
-            <div class="kpi-label">Cycle Days to Revenue</div>
+            <div class="kpi-label">Days to Revenue</div>
             <div class="kpi-value" id="b-kpi-cycledays">—</div>
           </div>
           <div class="kpi">
@@ -811,21 +648,9 @@ input[type="range"] {
         </div>
       </div>
     </div>
-  </div><!-- /b2b panel -->
-
-  <!-- CTA Banner -->
-  <div class="cta-banner">
-    <div>
-      <h3>See how SPOTIO automates territory management</h3>
-      <p>Stop calculating manually. SPOTIO maps your territories, tracks contacts, and surfaces the best times to knock — automatically.</p>
-    </div>
-    <a href="https://spotio.com/demo" target="_blank" rel="noopener noreferrer" class="btn-demo">Get a Free Demo</a>
   </div>
 
-</div><!-- /page-wrapper -->
-
 <script>
-// ── Utility ──────────────────────────────────────────────
 function syncRange(rangeId, valId, suffix) {
   document.getElementById(valId).textContent = document.getElementById(rangeId).value + suffix;
 }
@@ -855,18 +680,16 @@ function runPasses(totalUnits, unitsPerDay, baseCR, decayRate, targetPct) {
     const pct = totalContacted / totalUnits;
 
     passes.push({
-      label: (ordinals[i] || `Pass ${i+1}`) + ' Pass',
-      daysThisPass: daysThisPass,
-      cumDays: cumDays,
-      contacts: contacts,
+      label: (ordinals[i] || 'Pass ' + (i+1)) + ' Pass',
+      daysThisPass,
+      cumDays,
+      contacts,
       remaining: Math.max(0, Math.round(remaining)),
-      pctRemaining: Math.max(0, remaining / totalUnits),
-      totalContacted: totalContacted,
+      totalContacted,
       contactRate: pct,
     });
 
     if (targetPassIdx < 0 && pct >= targetPct) targetPassIdx = i;
-
     effectiveCR = Math.max(0.01, effectiveCR * (1 - decayRate));
     if (remaining <= 0) break;
   }
@@ -888,81 +711,72 @@ function buildTable(tbodyId, passes, targetPassIdx) {
       <td>${fmt(p.remaining)}</td>
       <td>${fmt(p.totalContacted)}</td>
       <td>${Math.round(p.contactRate * 100)}%</td>
-      <td style="min-width:80px">
-        <div class="progress-wrap"><div class="progress-bar" style="width:${barW}%"></div></div>
-      </td>`;
+      <td style="min-width:80px"><div class="progress-wrap"><div class="progress-bar" style="width:${barW}%"></div></div></td>`;
     tbody.appendChild(tr);
   });
 }
 
-// ── Residential Calc ─────────────────────────────────────
 function calcR() {
-  const area    = parseFloat(document.getElementById('r-area').value) || 0;
-  const lot     = parseFloat(document.getElementById('r-lot').value)  || 0.25;
-  const knocks  = parseFloat(document.getElementById('r-knocks').value) || 50;
-  const cr      = parseFloat(document.getElementById('r-cr').value) / 100;
-  const decay   = parseFloat(document.getElementById('r-decay').value) / 100;
-  const conv    = parseFloat(document.getElementById('r-conv').value) / 100;
-  const deal    = parseFloat(document.getElementById('r-deal').value)  || 0;
+  const area   = parseFloat(document.getElementById('r-area').value)   || 0;
+  const lot    = parseFloat(document.getElementById('r-lot').value)    || 0.25;
+  const knocks = parseFloat(document.getElementById('r-knocks').value) || 50;
+  const cr     = parseFloat(document.getElementById('r-cr').value)    / 100;
+  const decay  = parseFloat(document.getElementById('r-decay').value) / 100;
+  const conv   = parseFloat(document.getElementById('r-conv').value)  / 100;
+  const deal   = parseFloat(document.getElementById('r-deal').value)  || 0;
 
-  const houses  = Math.round((area * 640) / lot);
+  const houses = Math.round((area * 640) / lot);
   document.getElementById('r-kpi-houses').textContent = fmt(houses);
 
   const { passes, targetPassIdx } = runPasses(houses, knocks, cr, decay, 0.75);
   buildTable('r-tbody', passes, targetPassIdx);
 
-  const passNum = targetPassIdx >= 0 ? targetPassIdx + 1 : passes.length;
-  const cumDays = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].cumDays) : Math.round(passes[passes.length-1].cumDays);
+  const passNum        = targetPassIdx >= 0 ? targetPassIdx + 1 : passes.length;
+  const cumDays        = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].cumDays) : Math.round(passes[passes.length-1].cumDays);
   const totalContacted = targetPassIdx >= 0 ? passes[targetPassIdx].totalContacted : passes[passes.length-1].totalContacted;
+  const reachedPct     = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].contactRate * 100) : '—';
 
-  document.getElementById('r-kpi-passes').textContent = passNum;
-  document.getElementById('r-kpi-days').textContent   = cumDays;
-  document.getElementById('r-summary').textContent    = `${passNum} passes · ${cumDays} days to reach ${targetPassIdx>=0 ? Math.round(passes[targetPassIdx].contactRate*100) : '—'}% market penetration`;
-
-  const sales   = Math.round(totalContacted * conv);
-  const revenue = sales * deal;
-  document.getElementById('r-kpi-contacts').textContent = fmt(totalContacted);
-  document.getElementById('r-kpi-sales').textContent    = fmt(sales);
-  document.getElementById('r-kpi-revenue').textContent  = fmtMoney(revenue);
+  document.getElementById('r-kpi-passes').textContent  = passNum;
+  document.getElementById('r-kpi-days').textContent    = cumDays;
+  document.getElementById('r-summary').textContent     = `${passNum} passes · ${cumDays} days to reach ${reachedPct}% market penetration`;
+  document.getElementById('r-kpi-contacts').textContent= fmt(totalContacted);
+  document.getElementById('r-kpi-sales').textContent   = fmt(Math.round(totalContacted * conv));
+  document.getElementById('r-kpi-revenue').textContent = fmtMoney(Math.round(totalContacted * conv) * deal);
 }
 
-// ── B2B Calc ─────────────────────────────────────────────
 function calcB() {
-  const accounts = parseFloat(document.getElementById('b-accounts').value) || 0;
-  const visits   = parseFloat(document.getElementById('b-visits').value)   || 12;
-  const cr       = parseFloat(document.getElementById('b-cr').value)  / 100;
-  const decay    = parseFloat(document.getElementById('b-decay').value) / 100;
-  const cycle    = parseFloat(document.getElementById('b-cycle').value)   || 30;
-  const demoRate = parseFloat(document.getElementById('b-demo').value) / 100;
-  const closeRate= parseFloat(document.getElementById('b-close').value) / 100;
-  const acv      = parseFloat(document.getElementById('b-acv').value)     || 0;
+  const accounts  = parseFloat(document.getElementById('b-accounts').value) || 0;
+  const visits    = parseFloat(document.getElementById('b-visits').value)   || 12;
+  const cr        = parseFloat(document.getElementById('b-cr').value)      / 100;
+  const decay     = parseFloat(document.getElementById('b-decay').value)   / 100;
+  const cycle     = parseFloat(document.getElementById('b-cycle').value)   || 30;
+  const demoRate  = parseFloat(document.getElementById('b-demo').value)    / 100;
+  const closeRate = parseFloat(document.getElementById('b-close').value)   / 100;
+  const acv       = parseFloat(document.getElementById('b-acv').value)     || 0;
 
   document.getElementById('b-kpi-accounts').textContent = fmt(accounts);
 
   const { passes, targetPassIdx } = runPasses(accounts, visits, cr, decay, 0.75);
   buildTable('b-tbody', passes, targetPassIdx);
 
-  const passNum  = targetPassIdx >= 0 ? targetPassIdx + 1 : passes.length;
-  const cumDays  = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].cumDays) : Math.round(passes[passes.length-1].cumDays);
+  const passNum        = targetPassIdx >= 0 ? targetPassIdx + 1 : passes.length;
+  const cumDays        = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].cumDays) : Math.round(passes[passes.length-1].cumDays);
   const totalContacted = targetPassIdx >= 0 ? passes[targetPassIdx].totalContacted : passes[passes.length-1].totalContacted;
-  const demos    = Math.round(totalContacted * demoRate);
-  const closes   = Math.round(demos * closeRate);
-  const pipeline = totalContacted * demoRate * acv; // in-flight pipeline
-  const totalRev = closes * acv;
-  const cycleDays= cumDays + cycle;
+  const reachedPct     = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].contactRate * 100) : '—';
+  const demos          = Math.round(totalContacted * demoRate);
+  const closes         = Math.round(demos * closeRate);
 
-  document.getElementById('b-kpi-passes').textContent    = passNum;
-  document.getElementById('b-kpi-days').textContent      = cumDays;
-  document.getElementById('b-summary').textContent       = `${passNum} passes · ${cumDays} days to reach ${targetPassIdx>=0 ? Math.round(passes[targetPassIdx].contactRate*100) : '—'}% account penetration`;
-  document.getElementById('b-kpi-contacts').textContent  = fmt(totalContacted);
-  document.getElementById('b-kpi-demos').textContent     = fmt(demos);
-  document.getElementById('b-kpi-revenue').textContent   = fmtMoney(pipeline);
-  document.getElementById('b-kpi-closes').textContent    = fmt(closes);
-  document.getElementById('b-kpi-cycledays').textContent = cycleDays;
-  document.getElementById('b-kpi-totalrev').textContent  = fmtMoney(totalRev);
+  document.getElementById('b-kpi-passes').textContent   = passNum;
+  document.getElementById('b-kpi-days').textContent     = cumDays;
+  document.getElementById('b-summary').textContent      = `${passNum} passes · ${cumDays} days to reach ${reachedPct}% account penetration`;
+  document.getElementById('b-kpi-contacts').textContent = fmt(totalContacted);
+  document.getElementById('b-kpi-demos').textContent    = fmt(demos);
+  document.getElementById('b-kpi-revenue').textContent  = fmtMoney(totalContacted * demoRate * acv);
+  document.getElementById('b-kpi-closes').textContent   = fmt(closes);
+  document.getElementById('b-kpi-cycledays').textContent= cumDays + cycle;
+  document.getElementById('b-kpi-totalrev').textContent = fmtMoney(closes * acv);
 }
 
-// ── Tab Switching ─────────────────────────────────────────
 function switchTab(mode) {
   document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -971,7 +785,6 @@ function switchTab(mode) {
   document.getElementById('panel-' + mode).classList.add('active');
 }
 
-// ── Init ─────────────────────────────────────────────────
 calcR();
 calcB();
 </script>
