@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPOTIO B2B ROI Calculator</title>
+<style>
+  :root{
+    --gold:#FFC300; --gold-deep:#E6A700; --ink:#28272D; --ink-2:#201F24; --blue:#1863DC;
+    --paper:#F4F6F7; --card:#FFFFFF; --line:#E4E4E0; --line-strong:#D3D3CD; --muted:#69686C; --muted-2:#8A8A8E; --text:#28272D;
+    --shadow:0 1px 2px rgba(40,39,45,.06),0 8px 24px rgba(40,39,45,.06); --radius:6px;
+    --sans:'Archivo','Helvetica Neue','Segoe UI',Arial,system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{--paper:#161519;--card:#201F24;--line:#33323A;--line-strong:#413F49;--muted:#A5A4AB;--muted-2:#7E7D85;--text:#F1F1F3;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);}}
+  :root[data-theme="light"]{--paper:#F4F6F7;--card:#FFFFFF;--line:#E4E4E0;--line-strong:#D3D3CD;--muted:#69686C;--muted-2:#8A8A8E;--text:#28272D;}
+  :root[data-theme="dark"]{--paper:#161519;--card:#201F24;--line:#33323A;--line-strong:#413F49;--muted:#A5A4AB;--muted-2:#7E7D85;--text:#F1F1F3;}
+  *{box-sizing:border-box} body{margin:0}
+  .wrap{font-family:var(--sans);background:var(--paper);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5;padding:clamp(14px,3vw,28px) clamp(14px,4vw,40px) 40px;}
+  .shell{max-width:1120px;margin:0 auto}
+  .grid{display:grid;grid-template-columns:1fr;gap:24px;margin-top:0;}
+  @media(min-width:940px){.grid{grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:32px;align-items:start}}
+  .form{display:flex;flex-direction:column;gap:22px}
+  fieldset{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);padding:20px 20px 22px;margin:0;box-shadow:var(--shadow);}
+  legend{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);padding:0 8px;margin-left:-4px;}
+  @media (prefers-color-scheme:dark){legend{color:var(--text)}}
+  :root[data-theme="dark"] legend{color:var(--text)}
+  .step{color:var(--gold-deep);margin-right:6px}
+  @media (prefers-color-scheme:dark){.step{color:var(--gold)}}
+  :root[data-theme="dark"] .step{color:var(--gold)}
+  .field{margin-top:18px} .field:first-of-type{margin-top:6px}
+  .field > label,.qlabel{display:block;font-size:14px;font-weight:600;margin-bottom:9px;color:var(--text);}
+  .hint{font-weight:400;color:var(--muted-2);font-size:12.5px}
+  .control{width:100%;font-family:inherit;font-size:15px;color:var(--text);background:var(--card);border:1px solid var(--line-strong);border-radius:4px;padding:11px 12px;appearance:none;}
+  .control:focus-visible{outline:3px solid rgba(24,99,220,.35);outline-offset:1px;border-color:var(--blue)}
+  select.control{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%2369686C' stroke-width='1.6'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;cursor:pointer;}
+  .prefix{position:relative}
+  .prefix span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none}
+  .prefix .control{padding-left:26px}
+  .slider-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .slider-val{font-weight:800;font-size:20px;font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+  .slider-val small{font-size:13px;font-weight:600;color:var(--muted)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:var(--line-strong);outline:none;margin:6px 0 2px;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--gold);border:3px solid var(--card);box-shadow:0 1px 4px rgba(40,39,45,.35);cursor:pointer;}
+  input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--gold);border:3px solid var(--card);box-shadow:0 1px 4px rgba(40,39,45,.35);cursor:pointer;}
+  input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(24,99,220,.4)}
+  .scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted-2)}
+  details.adv{border:1px dashed var(--line-strong);border-radius:var(--radius);background:transparent}
+  details.adv summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  details.adv summary::-webkit-details-marker{display:none}
+  details.adv summary .chev{transition:transform .2s}
+  details.adv[open] summary .chev{transform:rotate(90deg)}
+  .adv-body{padding:2px 18px 20px;display:flex;flex-direction:column;gap:20px}
+  .adv-note{font-size:12.5px;color:var(--muted-2);margin:-4px 0 2px;line-height:1.45}
+  .results{position:sticky;top:20px}
+  .rcard{background:var(--ink);color:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 40px rgba(40,39,45,.28);}
+  .rhead{padding:22px 24px 6px}
+  .rhead .rk{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+  .hero-num{font-size:clamp(38px,7vw,60px);font-weight:800;letter-spacing:-.03em;line-height:1;margin:8px 0 4px;color:var(--gold);font-variant-numeric:tabular-nums;}
+  .hero-sub{font-size:14px;color:rgba(255,255,255,.72);margin:0 0 4px}
+  .hero-grid{display:flex;gap:20px;margin-bottom:18px}
+  .hero-cell{flex:1;min-width:0}
+  .hero-cell + .hero-cell{border-left:1px solid rgba(255,255,255,.12);padding-left:20px}
+  .hero-grid .hero-num{font-size:clamp(26px,4.4vw,40px);margin:6px 0 4px}
+  .hero-num.alt{color:#fff}
+  @media(max-width:480px){.hero-grid{flex-direction:column;gap:14px}.hero-cell + .hero-cell{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.12);padding-top:14px}}
+  .rbody{background:var(--ink-2);padding:6px 24px 22px}
+  .stat{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.09);}
+  .stat:last-of-type{border-bottom:none}
+  .stat .lbl{font-size:13.5px;color:rgba(255,255,255,.72)}
+  .stat .lbl small{display:block;font-size:11.5px;color:rgba(255,255,255,.42)}
+  .stat .num{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .stat .num.pos{color:var(--gold)}
+  .funnel{padding:18px 24px 4px;background:var(--ink-2)}
+  .funnel .fk{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:12px}
+  .fbar{margin-bottom:12px}
+  .fbar .frow{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;color:rgba(255,255,255,.85)}
+  .fbar .frow b{font-variant-numeric:tabular-nums}
+  .ftrack{height:9px;border-radius:6px;background:rgba(255,255,255,.09);overflow:hidden}
+  .ffill{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+  .ffill.a{background:rgba(255,255,255,.4)} .ffill.b{background:var(--blue)} .ffill.c{background:var(--gold)}
+  .cta{padding:20px 24px 24px;background:var(--ink-2);display:flex;flex-direction:column;gap:10px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:800;font-size:15px;padding:14px 18px;border-radius:4px;letter-spacing:.01em;transition:transform .08s,background .15s;}
+  .btn:active{transform:translateY(1px)}
+  .btn-gold{background:var(--gold);color:var(--ink)} .btn-gold:hover{background:#FFD23D}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28)} .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.06)}
+  .cta .sub{font-size:12px;color:rgba(255,255,255,.5);text-align:center;margin-top:2px}
+  .disclaimer{font-size:11.5px;color:var(--muted-2);margin:16px 4px 0;line-height:1.45;max-width:60ch}
+  .hidden{display:none !important}
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="shell">
+    <div class="grid">
+      <form class="form" id="form" autocomplete="off">
+        <fieldset>
+          <legend><span class="step">01</span>Your team</legend>
+          <div class="field">
+            <div class="slider-row"><label for="reps">How many sales reps are on your team?</label><div class="slider-val"><span id="reps-out">10</span> <small>reps</small></div></div>
+            <input type="range" id="reps" min="1" max="250" step="1" value="10">
+            <div class="scale"><span>1</span><span>250</span></div>
+          </div>
+          <div class="field">
+            <label for="price">Price per user / month <span class="hint">— billed annually; adjust to your quoted rate</span></label>
+            <div class="prefix"><span>$</span><input class="control" type="number" id="price" min="0" step="5" value="99"></div>
+          </div>
+          <div class="field">
+            <label for="model">How does your team sell?</label>
+            <select class="control" id="model">
+              <option value="apptSet" selected>Set appointments, then close them (2-step)</option>
+              <option value="noShow">Set appointments, with no-shows to account for</option>
+              <option value="oneTouch">Close on the first visit (one-touch / canvass &amp; close)</option>
+            </select>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span class="step">02</span>Your numbers today</legend>
+          <div class="field">
+            <label for="deal">Average deal size <span class="hint">— revenue per new customer</span></label>
+            <div class="prefix"><span>$</span><input class="control" type="number" id="deal" min="0" step="500" value="15000"></div>
+          </div>
+          <div class="field">
+            <div class="slider-row"><label for="wins">Wins per rep, per month</label><div class="slider-val"><span id="wins-out">20</span></div></div>
+            <input type="range" id="wins" min="1" max="60" step="1" value="20">
+            <div class="scale"><span>1</span><span>60</span></div>
+          </div>
+          <div class="field" id="appts-field">
+            <div class="slider-row"><label for="appts">Appointments per rep, per month</label><div class="slider-val"><span id="appts-out">50</span></div></div>
+            <input type="range" id="appts" min="1" max="200" step="1" value="50">
+            <div class="scale"><span>1</span><span>200</span></div>
+          </div>
+          <div class="field" id="sit-field">
+            <div class="slider-row"><label for="sit">Appointment show rate <span class="hint">— % that don't no-show</span></label><div class="slider-val"><span id="sit-out">50</span><small>%</small></div></div>
+            <input type="range" id="sit" min="10" max="100" step="5" value="50">
+            <div class="scale"><span>10%</span><span>100%</span></div>
+          </div>
+          <div class="field">
+            <div class="slider-row"><label for="activity">Field activities per rep, per day <span class="hint">— visits, calls, knocks</span></label><div class="slider-val"><span id="activity-out">30</span></div></div>
+            <input type="range" id="activity" min="5" max="120" step="1" value="30">
+            <div class="scale"><span>5</span><span>120</span></div>
+          </div>
+        </fieldset>
+        <details class="adv">
+          <summary>Fine-tune the SPOTIO impact assumptions <span class="chev">›</span></summary>
+          <div class="adv-body">
+            <p class="adv-note">These are the productivity gains we model from SPOTIO. Defaults are conservative and mirror SPOTIO's sales-team ROI model — adjust them to match your own expectations.</p>
+            <div class="field" style="margin-top:0">
+              <div class="slider-row"><label for="actlift">Added field activities per rep, per day</label><div class="slider-val">+<span id="actlift-out">5</span></div></div>
+              <input type="range" id="actlift" min="0" max="15" step="1" value="5">
+              <div class="scale"><span>+0</span><span>+15</span></div>
+            </div>
+            <div class="field" id="convlift-field" style="margin-top:0">
+              <div class="slider-row"><label for="convlift">Lift in activity→appointment conversion</label><div class="slider-val">+<span id="convlift-out">2</span><small>pts</small></div></div>
+              <input type="range" id="convlift" min="0" max="15" step="1" value="2">
+              <div class="scale"><span>+0</span><span>+15 pts</span></div>
+            </div>
+            <div class="field hidden" id="showlift-field" style="margin-top:0">
+              <div class="slider-row"><label for="showlift">Lift in appointment show rate</label><div class="slider-val">+<span id="showlift-out">5</span><small>pts</small></div></div>
+              <input type="range" id="showlift" min="0" max="25" step="1" value="5">
+              <div class="scale"><span>+0</span><span>+25 pts</span></div>
+            </div>
+            <div class="field hidden" id="winlift-field" style="margin-top:0">
+              <div class="slider-row"><label for="winlift">Lift in activity→win conversion</label><div class="slider-val">+<span id="winlift-out">0</span><small>pts</small></div></div>
+              <input type="range" id="winlift" min="0" max="10" step="1" value="0">
+              <div class="scale"><span>+0</span><span>+10 pts</span></div>
+            </div>
+            <div class="field" style="margin-top:0">
+              <div class="slider-row"><label for="margin">Contribution margin <span class="hint">— for return math</span></label><div class="slider-val"><span id="margin-out">50</span><small>%</small></div></div>
+              <input type="range" id="margin" min="10" max="100" step="5" value="50">
+              <div class="scale"><span>10%</span><span>100%</span></div>
+            </div>
+          </div>
+        </details>
+      </form>
+      <div class="results">
+        <div class="rcard">
+          <div class="rhead">
+            <div class="hero-grid">
+              <div class="hero-cell"><div class="rk">Added revenue / year</div><div class="hero-num" id="hero">$0</div><p class="hero-sub" id="hero-sub">from <span id="hero-deals">0</span> more deals / year</p></div>
+              <div class="hero-cell"><div class="rk">Return on investment</div><div class="hero-num alt" id="roi-mult">0×</div><p class="hero-sub">vs. your SPOTIO cost</p></div>
+            </div>
+          </div>
+          <div class="funnel">
+            <div class="fk">Incremental lift per month</div>
+            <div class="fbar" id="bar-act-wrap"><div class="frow"><span>Field activities</span><b id="f-act">0</b></div><div class="ftrack"><div class="ffill a" id="fill-act" style="width:0%"></div></div></div>
+            <div class="fbar" id="bar-appt-wrap"><div class="frow"><span>Appointments</span><b id="f-appt">0</b></div><div class="ftrack"><div class="ffill b" id="fill-appt" style="width:0%"></div></div></div>
+            <div class="fbar"><div class="frow"><span>New deals won</span><b id="f-win">0</b></div><div class="ftrack"><div class="ffill c" id="fill-win" style="width:0%"></div></div></div>
+          </div>
+          <div class="rbody">
+            <div class="stat"><div class="lbl">Added revenue / month</div><div class="num pos" id="s-rev-mo">$0</div></div>
+            <div class="stat"><div class="lbl">SPOTIO investment / year<small id="s-cost-detail">10 reps · $99/user/mo, billed annually</small></div><div class="num" id="s-cost">$0</div></div>
+            <div class="stat"><div class="lbl">Net gain / year<small>added margin, minus SPOTIO cost</small></div><div class="num pos" id="s-net">$0</div></div>
+            <div class="stat"><div class="lbl">Breakeven<small>new deals to cover a year of SPOTIO</small></div><div class="num" id="s-break">0</div></div>
+          </div>
+          <div class="cta">
+            <a class="btn btn-gold" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">Request a Demo →</a>
+            <a class="btn btn-ghost" href="https://spotio.com/solutions/field-sales-execution-b2b/" target="_blank" rel="noopener">Explore B2B Solutions</a>
+            <p class="sub">See your numbers run live with a SPOTIO specialist.</p>
+          </div>
+        </div>
+        <p class="disclaimer">Estimates are for illustration only and don't represent a guarantee or contractual obligation. Results depend on your team, market, and execution. Model adapted from SPOTIO's internal sales ROI framework.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var DAYS = 22;
+  var $ = function(id){return document.getElementById(id);};
+  var money = function(n){ n = Math.round(n); return '$' + n.toLocaleString('en-US'); };
+  var moneyShort = function(n){
+    n = Math.round(n);
+    if(Math.abs(n) >= 1000000) return '$' + (n/1000000).toFixed(n%1000000===0?0:1).replace(/\.0$/,'') + 'M';
+    if(Math.abs(n) >= 10000)   return '$' + Math.round(n/1000) + 'K';
+    return '$' + n.toLocaleString('en-US');
+  };
+  var num = function(n,d){ d = d||0; return Number(n).toLocaleString('en-US',{maximumFractionDigits:d}); };
+  var safeDiv = function(a,b){ return (!b || !isFinite(b)) ? 0 : a/b; };
+  var outs = {reps:'reps-out',wins:'wins-out',appts:'appts-out',sit:'sit-out',activity:'activity-out',actlift:'actlift-out',convlift:'convlift-out',showlift:'showlift-out',winlift:'winlift-out',margin:'margin-out'};
+  function readInputs(){
+    return {
+      reps: +$('reps').value, price: Math.max(0, +$('price').value || 0), model: $('model').value,
+      deal: Math.max(0, +$('deal').value || 0), wins: +$('wins').value, appts: +$('appts').value,
+      sit: (+$('sit').value)/100, activity: +$('activity').value, actlift: +$('actlift').value,
+      convlift: (+$('convlift').value)/100, showlift: (+$('showlift').value)/100, winlift: (+$('winlift').value)/100, margin: (+$('margin').value)/100
+    };
+  }
+  function calc(v){
+    var reps = v.reps, ltvPerWin = v.deal * v.margin, costMonth = reps * v.price, costYear = costMonth * 12;
+    var activityMoRep = v.activity * DAYS, apptRate = safeDiv(v.appts, activityMoRep), winRateAct = safeDiv(v.wins, activityMoRep), winPerAppt = safeDiv(v.wins, v.appts), winPerSit = safeDiv(v.wins, v.appts * v.sit);
+    var incActMonth = v.actlift * reps * DAYS, incAppt = 0, incWin = 0;
+    if(v.model === 'oneTouch'){ var newWinRate = winRateAct + v.winlift; incWin = newWinRate * incActMonth; incAppt = 0; }
+    else if(v.model === 'apptSet'){ var newApptRate = apptRate + v.convlift; var apptsFromNewActivity = incActMonth * newApptRate; var apptsFromBetterConv = v.convlift * activityMoRep * reps; incAppt = apptsFromNewActivity + apptsFromBetterConv; incWin = incAppt * winPerAppt; }
+    else { var baseActMonth = activityMoRep * reps; var totalAct = baseActMonth + incActMonth; var newApptRate2 = apptRate + v.convlift; var apptSets = totalAct * newApptRate2; var newShow = v.sit + v.showlift; var apptSits = apptSets * newShow; var totalWins = apptSits * winPerSit; var baseWins = baseActMonth * apptRate * v.sit * winPerSit; incWin = totalWins - baseWins; incAppt = apptSets - (baseActMonth * apptRate); }
+    if(incWin < 0) incWin = 0; if(incAppt < 0) incAppt = 0;
+    var revMonth = incWin * v.deal, revYear = revMonth * 12, marginYear = revYear * v.margin;
+    var roi = safeDiv(incWin * ltvPerWin, costMonth), netYear = marginYear - costYear, breakeven = safeDiv(costYear, ltvPerWin);
+    return { reps:reps, price:v.price, costYear:costYear, incActMonth:incActMonth, incAppt:incAppt, incWin:incWin, revMonth:revMonth, revYear:revYear, netYear:netYear, roi:roi, breakeven:breakeven, dealsYear: incWin*12 };
+  }
+  function pct(val, max){ if(max<=0) return 0; return Math.max(3, Math.min(100, (val/max)*100)); }
+  function render(){
+    var v = readInputs(), isOne = v.model === 'oneTouch', isNo = v.model === 'noShow';
+    $('appts-field').classList.toggle('hidden', isOne);
+    $('sit-field').classList.toggle('hidden', !isNo);
+    $('convlift-field').classList.toggle('hidden', isOne);
+    $('showlift-field').classList.toggle('hidden', !isNo);
+    $('winlift-field').classList.toggle('hidden', !isOne);
+    $('bar-appt-wrap').classList.toggle('hidden', isOne);
+    for(var k in outs){ if($(k)) $(outs[k]).textContent = $(k).value; }
+    var r = calc(v);
+    $('hero').textContent = moneyShort(r.revYear);
+    $('hero-deals').textContent = num(r.dealsYear, r.dealsYear < 10 ? 1 : 0);
+    $('roi-mult').textContent = (r.roi >= 100 ? Math.round(r.roi) : r.roi.toFixed(1).replace(/\.0$/,'')) + '×';
+    $('f-act').textContent  = num(r.incActMonth);
+    $('f-appt').textContent = num(r.incAppt, r.incAppt < 10 ? 1 : 0);
+    $('f-win').textContent  = num(r.incWin, r.incWin < 10 ? 1 : 0);
+    var maxBar = Math.max(r.incActMonth, 1);
+    $('fill-act').style.width  = pct(r.incActMonth, maxBar) + '%';
+    $('fill-appt').style.width = pct(r.incAppt, maxBar) + '%';
+    $('fill-win').style.width  = pct(r.incWin, maxBar) + '%';
+    $('s-rev-mo').textContent = money(r.revMonth);
+    $('s-cost').textContent   = money(r.costYear);
+    $('s-cost-detail').textContent = r.reps + (r.reps===1?' rep · $':' reps · $') + num(r.price) + '/user/mo, billed annually';
+    $('s-net').textContent    = money(r.netYear);
+    $('s-net').classList.toggle('pos', r.netYear >= 0);
+    $('s-break').textContent  = r.breakeven < 1 ? '<1 deal' : num(Math.ceil(r.breakeven)) + ' deals';
+  }
+  var form = $('form');
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+  render();
+})();
+</script>
+<script>
+// Auto-resize: report height to the parent WordPress page
+(function(){
+  var last=0;
+  function report(){var h=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);if(h&&h!==last){last=h;parent.postMessage({spotioRoiHeight:h,calc:'b2b'},'*');}}
+  window.addEventListener('load',report);window.addEventListener('resize',report);
+  try{new ResizeObserver(report).observe(document.body);}catch(e){}
+  setInterval(report,700);
+})();
+</script>
+</body>
+</html>
