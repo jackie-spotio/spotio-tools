@@ -14,14 +14,15 @@
   @media (prefers-color-scheme:dark){:root{--paper:#161519;--card:#201F24;--line:#33323A;--line-strong:#413F49;--muted:#A5A4AB;--muted-2:#7E7D85;--text:#F1F1F3;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);}}
   :root[data-theme="light"]{--paper:#F4F6F7;--card:#FFFFFF;--line:#E4E4E0;--line-strong:#D3D3CD;--muted:#69686C;--muted-2:#8A8A8E;--text:#28272D;}
   :root[data-theme="dark"]{--paper:#161519;--card:#201F24;--line:#33323A;--line-strong:#413F49;--muted:#A5A4AB;--muted-2:#7E7D85;--text:#F1F1F3;}
-  *{box-sizing:border-box} body{margin:0}
+  *{box-sizing:border-box}
+  body{margin:0}
   .wrap{font-family:var(--sans);background:var(--paper);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5;padding:clamp(14px,3vw,28px) clamp(14px,4vw,40px) 40px;}
   .shell{max-width:1120px;margin:0 auto}
   .grid{display:grid;grid-template-columns:1fr;gap:24px;margin-top:0;}
   @media(min-width:940px){.grid{grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:32px;align-items:start}}
   .form{display:flex;flex-direction:column;gap:22px}
   fieldset{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);padding:20px 20px 22px;margin:0;box-shadow:var(--shadow);}
-  legend{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);padding:0 8px;margin-left:-4px;}
+  legend{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);padding:0 8px;margin-left:-4px;}
   @media (prefers-color-scheme:dark){legend{color:var(--text)}}
   :root[data-theme="dark"] legend{color:var(--text)}
   .step{color:var(--gold-deep);margin-right:6px}
@@ -29,67 +30,67 @@
   :root[data-theme="dark"] .step{color:var(--gold)}
   .field{margin-top:18px}
   .field:first-of-type{margin-top:6px}
-  .field > label,.qlabel{display:block;font-size:14px;font-weight:600;margin-bottom:9px;color:var(--text);}
-  .hint{font-weight:400;color:var(--muted-2);font-size:12.5px}
-  .control{width:100%;font-family:inherit;font-size:15px;color:var(--text);background:var(--card);border:1px solid var(--line-strong);border-radius:4px;padding:11px 12px;appearance:none;}
+  .field > label,.qlabel{display:block;font-size:15px;font-weight:600;margin-bottom:9px;color:var(--text);}
+  .hint{font-weight:400;color:var(--muted-2);font-size:13.5px}
+  .control{width:100%;font-family:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--line-strong);border-radius:4px;padding:11px 12px;appearance:none;}
   .control:focus-visible{outline:3px solid rgba(24,99,220,.35);outline-offset:1px;border-color:var(--blue)}
   .prefix{position:relative}
-  .prefix span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none}
+  .prefix span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none}
   .prefix .control{padding-left:26px}
-  .reality{margin-top:9px;font-size:12.5px;color:var(--muted-2);line-height:1.4;display:flex;align-items:baseline;gap:7px}
+  .reality{margin-top:9px;font-size:13.5px;color:var(--muted-2);line-height:1.4;display:flex;align-items:baseline;gap:7px}
   .reality b{color:var(--gold-deep);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
   @media (prefers-color-scheme:dark){.reality b{color:var(--gold)}}
   :root[data-theme="dark"] .reality b{color:var(--gold)}
   .slider-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px}
   .slider-row label{margin-bottom:0}
-  .slider-val{font-weight:800;font-size:20px;font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap;}
-  .slider-val small{font-size:13px;font-weight:600;color:var(--muted)}
+  .slider-val{font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap;}
+  .slider-val small{font-size:14px;font-weight:600;color:var(--muted)}
   input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:var(--line-strong);outline:none;margin:6px 0 2px;}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--gold);border:3px solid var(--card);box-shadow:0 1px 4px rgba(40,39,45,.35);cursor:pointer;}
   input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--gold);border:3px solid var(--card);box-shadow:0 1px 4px rgba(40,39,45,.35);cursor:pointer;}
   input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(24,99,220,.4)}
-  .scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted-2)}
+  .scale{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted-2)}
   details.adv{border:1px dashed var(--line-strong);border-radius:var(--radius);background:transparent}
-  details.adv summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  details.adv summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;font-size:14px;letter-spacing:.04em;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
   details.adv summary::-webkit-details-marker{display:none}
   details.adv summary .chev{transition:transform .2s}
   details.adv[open] summary .chev{transform:rotate(90deg)}
   .adv-body{padding:2px 18px 20px;display:flex;flex-direction:column;gap:20px}
-  .adv-note{font-size:12.5px;color:var(--muted-2);margin:-4px 0 2px;line-height:1.45}
+  .adv-note{font-size:13.5px;color:var(--muted-2);margin:-4px 0 2px;line-height:1.45}
   .results{position:sticky;top:20px}
   .rcard{background:var(--ink);color:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 40px rgba(40,39,45,.28);}
   .rhead{padding:22px 24px 6px}
-  .rhead .rk{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+  .rhead .rk{font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55)}
   .hero-num{font-size:clamp(38px,7vw,60px);font-weight:800;letter-spacing:-.03em;line-height:1;margin:8px 0 4px;color:var(--gold);font-variant-numeric:tabular-nums;}
-  .hero-sub{font-size:14px;color:rgba(255,255,255,.72);margin:0 0 4px}
+  .hero-sub{font-size:15px;color:rgba(255,255,255,.72);margin:0 0 4px}
   .hero-grid{display:flex;gap:20px;margin-bottom:18px}
   .hero-cell{flex:1;min-width:0}
   .hero-cell + .hero-cell{border-left:1px solid rgba(255,255,255,.12);padding-left:20px}
-  .hero-grid .hero-num{font-size:clamp(26px,4.4vw,40px);margin:6px 0 4px}
+  .hero-grid .hero-num{font-size:clamp(28px,4.7vw,44px);margin:6px 0 4px}
   .hero-num.alt{color:#fff}
   @media(max-width:480px){.hero-grid{flex-direction:column;gap:14px}.hero-cell + .hero-cell{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.12);padding-top:14px}}
   .rbody{background:var(--ink-2);padding:6px 24px 22px}
   .stat{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.09);}
   .stat:last-of-type{border-bottom:none}
-  .stat .lbl{font-size:13.5px;color:rgba(255,255,255,.72)}
-  .stat .lbl small{display:block;font-size:11.5px;color:rgba(255,255,255,.42)}
-  .stat .num{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .stat .lbl{font-size:14.5px;color:rgba(255,255,255,.72)}
+  .stat .lbl small{display:block;font-size:12.5px;color:rgba(255,255,255,.42)}
+  .stat .num{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
   .stat .num.pos{color:var(--gold)}
   .funnel{padding:18px 24px 4px;background:var(--ink-2)}
-  .funnel .fk{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:12px}
+  .funnel .fk{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:12px}
   .fbar{margin-bottom:12px}
-  .fbar .frow{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;color:rgba(255,255,255,.85)}
+  .fbar .frow{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px;color:rgba(255,255,255,.85)}
   .fbar .frow b{font-variant-numeric:tabular-nums}
   .ftrack{height:9px;border-radius:6px;background:rgba(255,255,255,.09);overflow:hidden}
   .ffill{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
   .ffill.a{background:rgba(255,255,255,.4)} .ffill.c{background:var(--gold)}
   .cta{padding:20px 24px 24px;background:var(--ink-2);display:flex;flex-direction:column;gap:10px}
-  .btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:800;font-size:15px;padding:14px 18px;border-radius:4px;letter-spacing:.01em;transition:transform .08s,background .15s;}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:800;font-size:16px;padding:14px 18px;border-radius:4px;letter-spacing:.01em;transition:transform .08s,background .15s;}
   .btn:active{transform:translateY(1px)}
   .btn-gold{background:var(--gold);color:var(--ink)} .btn-gold:hover{background:#FFD23D}
   .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28)} .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.06)}
-  .cta .sub{font-size:12px;color:rgba(255,255,255,.5);text-align:center;margin-top:2px}
-  .disclaimer{font-size:11.5px;color:var(--muted-2);margin:16px 4px 0;line-height:1.45;max-width:60ch}
+  .cta .sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-top:2px}
+  .disclaimer{font-size:12.5px;color:var(--muted-2);margin:16px 4px 0;line-height:1.45;max-width:60ch}
   .hidden{display:none !important}
   @media (prefers-reduced-motion:reduce){*{transition:none !important}}
 </style>
@@ -109,7 +110,6 @@
           <div class="field">
             <label for="closed">Closed deals per year <span class="hint">— whole team, last 12 months</span></label>
             <input class="control" type="number" id="closed" min="0" step="10" value="300">
-            <p class="reality" id="reality">&nbsp;</p>
           </div>
           <div class="field">
             <label for="deal">Average contract value <span class="hint">— revenue per closed job</span></label>
@@ -122,35 +122,25 @@
         </fieldset>
         <fieldset>
           <legend><span class="step">02</span>Your door-knocking activity</legend>
-          <p class="adv-note" style="margin-top:6px">Used to sanity-check your closed-deal number and size the activity lift — no stage-by-stage percentages needed.</p>
           <div class="field">
-            <div class="slider-row"><label for="doors">Doors knocked per rep, per day</label><div class="slider-val"><span id="doors-out">15</span></div></div>
-            <input type="range" id="doors" min="5" max="150" step="1" value="15">
-            <div class="scale"><span>5</span><span>150</span></div>
-          </div>
-          <div class="field">
-            <div class="slider-row"><label for="days">Field days per week</label><div class="slider-val"><span id="days-out">3</span></div></div>
-            <input type="range" id="days" min="1" max="7" step="1" value="3">
-            <div class="scale"><span>1</span><span>7</span></div>
-          </div>
-          <div class="field">
-            <div class="slider-row"><label for="weeks">Selling weeks per year</label><div class="slider-val"><span id="weeks-out">35</span></div></div>
-            <input type="range" id="weeks" min="10" max="52" step="1" value="35">
-            <div class="scale"><span>10</span><span>52</span></div>
+            <label for="doorsyr">Doors knocked per rep, per year</label>
+            <input class="control" type="number" id="doorsyr" min="0" step="25" value="1575">
+            <p class="adv-note" style="margin-top:9px">Not sure? Multiply <b>doors per day &times; field days per week &times; selling weeks per year</b>.<br>Example: 15 &times; 3 &times; 35 &asymp; 1,575.</p>
+            <p class="reality" id="reality">&nbsp;</p>
           </div>
         </fieldset>
         <details class="adv">
           <summary>Fine-tune the SPOTIO impact assumptions <span class="chev">›</span></summary>
           <div class="adv-body">
-            <p class="adv-note">SPOTIO drives results two ways: more activity per rep, and more revenue from that activity (better targeting and follow-up). Defaults mirror SPOTIO's ~23% average revenue lift — adjust to your own expectations.</p>
+            <p class="adv-note">SPOTIO drives results two ways: more doors per rep (less windshield time) and more revenue per door (better targeting &amp; follow-up). The door boost is measured against how much you knock today, so its impact scales with your current activity. At the default door count these land near SPOTIO's ~23% average revenue lift.</p>
             <div class="field" style="margin-top:0">
-              <div class="slider-row"><label for="actlift">More sales activity <span class="hint">— extra doors worked</span></label><div class="slider-val">+<span id="actlift-out">11</span><small>%</small></div></div>
-              <input type="range" id="actlift" min="0" max="30" step="1" value="11">
-              <div class="scale"><span>+0%</span><span>+30%</span></div>
+              <div class="slider-row"><label for="addyr">Added doors per rep, per year <span class="hint">— from less windshield time</span></label><div class="slider-val">+<span id="addyr-out">210</span></div></div>
+              <input type="range" id="addyr" min="0" max="800" step="10" value="210">
+              <div class="scale"><span>+0</span><span>+800</span></div>
             </div>
             <div class="field" style="margin-top:0">
-              <div class="slider-row"><label for="convlift">Better return on activity <span class="hint">— more sales per door</span></label><div class="slider-val">+<span id="convlift-out">11</span><small>%</small></div></div>
-              <input type="range" id="convlift" min="0" max="30" step="1" value="11">
+              <div class="slider-row"><label for="convlift">Better return on activity <span class="hint">— more sales per door</span></label><div class="slider-val">+<span id="convlift-out">9</span><small>%</small></div></div>
+              <input type="range" id="convlift" min="0" max="30" step="1" value="9">
               <div class="scale"><span>+0%</span><span>+30%</span></div>
             </div>
             <div class="field" style="margin-top:0">
@@ -165,7 +155,7 @@
         <div class="rcard">
           <div class="rhead">
             <div class="hero-grid">
-              <div class="hero-cell"><div class="rk">Added revenue / year</div><div class="hero-num" id="hero">$0</div><p class="hero-sub" id="hero-sub">from <span id="hero-deals">0</span> more jobs / year</p></div>
+              <div class="hero-cell"><div class="rk">Added revenue / year</div><div class="hero-num" id="hero">$0</div><p class="hero-sub" id="hero-sub">from <span id="hero-deals">0</span> more jobs · +<span id="hero-lift">0</span>% lift</p></div>
               <div class="hero-cell"><div class="rk">Return on investment</div><div class="hero-num alt" id="roi-mult">0×</div><p class="hero-sub">vs. your SPOTIO cost</p></div>
             </div>
           </div>
@@ -203,22 +193,21 @@
   };
   var num = function(n,d){ d=d||0; return Number(n).toLocaleString('en-US',{maximumFractionDigits:d}); };
   var safeDiv = function(a,b){ return (!b || !isFinite(b)) ? 0 : a/b; };
-  var outs = {reps:'reps-out',doors:'doors-out',days:'days-out',weeks:'weeks-out',actlift:'actlift-out',convlift:'convlift-out',margin:'margin-out'};
+  var outs = {reps:'reps-out',addyr:'addyr-out',convlift:'convlift-out',margin:'margin-out'};
   function readInputs(){
     return {
       reps:+$('reps').value, closed:Math.max(0,+$('closed').value||0), deal:Math.max(0,+$('deal').value||0), price:Math.max(0,+$('price').value||0),
-      doors:+$('doors').value, days:+$('days').value, weeks:+$('weeks').value,
-      actlift:(+$('actlift').value)/100, convlift:(+$('convlift').value)/100, margin:(+$('margin').value)/100
+      doorsyr:Math.max(0,+$('doorsyr').value||0), addyr:+$('addyr').value,
+      convlift:(+$('convlift').value)/100, margin:(+$('margin').value)/100
     };
   }
-  // Baseline is entered directly (Closed deals per year). Doors are used only to
-  // sanity-check that number and to size the activity lift.
   function calc(v){
-    var doorsYear = v.reps * v.doors * v.days * v.weeks;
+    var doorsYear = v.doorsyr * v.reps;
     var baseDeals = v.closed;
     var baseRev   = baseDeals * v.deal;
     var dealsPerDoor = safeDiv(baseDeals, doorsYear);
-    var liftFactor = (1 + v.actlift) * (1 + v.convlift) - 1;
+    var addedFrac  = safeDiv(v.addyr, v.doorsyr);
+    var liftFactor = (1 + addedFrac) * (1 + v.convlift) - 1;
     var incDeals = baseDeals * liftFactor;
     var incRev   = incDeals * v.deal;
     var costYear = v.reps * v.price * 12;
@@ -226,9 +215,9 @@
     var roi      = safeDiv(value, costYear);
     var netYear  = value - costYear;
     var breakeven = safeDiv(costYear, v.deal * v.margin);
-    var incDoorsY = doorsYear * v.actlift;
+    var incDoorsY = v.addyr * v.reps;
     return {reps:v.reps, price:v.price, costYear:costYear, baseRev:baseRev, incRev:incRev, incDeals:incDeals,
-            roi:roi, netYear:netYear, breakeven:breakeven, incDoorsY:incDoorsY, dealsPerDoor:dealsPerDoor, doorsYear:doorsYear};
+            roi:roi, netYear:netYear, breakeven:breakeven, incDoorsY:incDoorsY, dealsPerDoor:dealsPerDoor, doorsYear:doorsYear, liftPct: liftFactor * 100};
   }
   function pct(val,max){ if(max<=0) return 0; return Math.max(3, Math.min(100,(val/max)*100)); }
   function render(){
@@ -241,6 +230,7 @@
     } else { $('reality').innerHTML = '&nbsp;'; }
     $('hero').textContent = moneyShort(r.incRev);
     $('hero-deals').textContent = num(r.incDeals, r.incDeals < 10 ? 1 : 0);
+    $('hero-lift').textContent = num(r.liftPct, r.liftPct < 10 ? 1 : 0);
     $('roi-mult').textContent = (r.roi >= 100 ? Math.round(r.roi) : r.roi.toFixed(1).replace(/\.0$/,'')) + '×';
     $('f-door').textContent = num(r.incDoorsY);
     $('f-win').textContent  = num(r.incDeals, r.incDeals < 10 ? 1 : 0);
