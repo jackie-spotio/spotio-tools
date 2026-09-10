@@ -59,11 +59,12 @@
   .adv-note{font-size:13.5px;color:var(--muted-2);margin:-4px 0 2px;line-height:1.45}
   .results{position:sticky;top:20px}
   .rcard{background:var(--ink);color:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 40px rgba(40,39,45,.28);}
-  .rhead{padding:22px 24px 6px}
+  .rhead{padding:20px 24px 6px}
+  .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);background:var(--gold);padding:4px 11px;border-radius:100px;margin-bottom:16px}
   .rhead .rk{font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55)}
   .hero-num{font-size:clamp(38px,7vw,60px);font-weight:800;letter-spacing:-.03em;line-height:1;margin:8px 0 4px;color:var(--gold);font-variant-numeric:tabular-nums;}
   .hero-sub{font-size:15px;color:rgba(255,255,255,.72);margin:0 0 4px}
-  .hero-grid{display:flex;gap:20px;margin-bottom:18px}
+  .hero-grid{display:flex;gap:20px;margin-bottom:16px}
   .hero-cell{flex:1;min-width:0}
   .hero-cell + .hero-cell{border-left:1px solid rgba(255,255,255,.12);padding-left:20px}
   .hero-grid .hero-num{font-size:clamp(28px,4.7vw,44px);margin:6px 0 4px}
@@ -89,8 +90,8 @@
   .btn:active{transform:translateY(1px)}
   .btn-gold{background:var(--gold);color:var(--ink)} .btn-gold:hover{background:#FFD23D}
   .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28)} .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.06)}
-  .cta .sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-top:2px}
-  .disclaimer{font-size:12.5px;color:var(--muted-2);margin:16px 4px 0;line-height:1.45;max-width:60ch}
+  .cta .sub{font-size:13px;color:rgba(255,255,255,.6);text-align:center;margin-top:4px;line-height:1.45}
+  .disclaimer{font-size:12.5px;color:var(--muted-2);margin:16px 4px 0;line-height:1.45;max-width:62ch}
   .hidden{display:none !important}
   @media (prefers-reduced-motion:reduce){*{transition:none !important}}
 </style>
@@ -154,6 +155,7 @@
       <div class="results">
         <div class="rcard">
           <div class="rhead">
+            <span class="pill">Illustrative example</span>
             <div class="hero-grid">
               <div class="hero-cell"><div class="rk">Added revenue / year</div><div class="hero-num" id="hero">$0</div><p class="hero-sub" id="hero-sub">from <span id="hero-deals">0</span> more jobs · +<span id="hero-lift">0</span>% lift</p></div>
               <div class="hero-cell"><div class="rk">Return on investment</div><div class="hero-num alt" id="roi-mult">0×</div><p class="hero-sub">vs. your SPOTIO cost</p></div>
@@ -171,12 +173,12 @@
             <div class="stat"><div class="lbl">Breakeven<small>added jobs to cover a year of SPOTIO</small></div><div class="num" id="s-break">0</div></div>
           </div>
           <div class="cta">
-            <a class="btn btn-gold" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">Request a Demo →</a>
+            <a class="btn btn-gold" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">Get My Custom ROI →</a>
             <a class="btn btn-ghost" href="https://spotio.com/solutions/field-sales-execution-b2c/" target="_blank" rel="noopener">Explore B2C Solutions</a>
-            <p class="sub">See your numbers run live with a SPOTIO specialist.</p>
+            <p class="sub">This is a directional example. Your tailored ROI — built on your real numbers — comes from a demo with a SPOTIO specialist.</p>
           </div>
         </div>
-        <p class="disclaimer">Estimates are for illustration only and don't represent a guarantee or contractual obligation. Results depend on your team, market, and execution. Model adapted from SPOTIO's internal field-sales ROI framework.</p>
+        <p class="disclaimer">Illustrative estimate only — not a quote or guarantee. Figures use common field-sales assumptions and don't reflect any specific agreement. Your actual ROI depends on your team, market, and execution.</p>
       </div>
     </div>
   </div>
