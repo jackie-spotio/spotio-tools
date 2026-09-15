@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPOTIO ROI Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+  :root{
+    --yellow:#f3c421; --navy:#4750a1; --charcoal:#4D4E53; --slate:#97A0A4; --black:#1B1B1B;
+    --white:#FFFFFF; --light-bg:#E9ECF0; --off-white:#F7F7F7;
+    --color-bg:var(--off-white); --color-surface:var(--white); --color-border:#D5D9DE;
+    --color-text:var(--black); --color-muted:var(--charcoal); --color-faint:var(--slate);
+    --color-primary:var(--navy); --color-accent:var(--yellow);
+    --radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    --space-1:0.25rem; --space-2:0.5rem; --space-3:0.75rem; --space-4:1rem; --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem;
+    --shadow-sm:0 1px 3px rgba(27,27,27,0.08); --shadow-md:0 4px 12px rgba(27,27,27,0.10);
+    --font:'Lato','Helvetica Neue',sans-serif; --transition:180ms cubic-bezier(0.16,1,0.3,1);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-font-smoothing:antialiased}
+  body{font-family:var(--font);font-size:15px;color:var(--color-text);background:var(--color-bg);line-height:1.6}
+  .wrap{max-width:1080px;margin:0 auto;padding:var(--space-6) var(--space-4)}
+  img,svg{display:block;max-width:100%}
+  button,input,select{font:inherit;color:inherit}
+  h1,h2,h3,h4,h5{line-height:1.2}
+
+  /* ── Tabs ── */
+  .tab-nav{display:flex;gap:var(--space-1);background:var(--light-bg);border-radius:var(--radius-lg);padding:var(--space-1);margin-bottom:var(--space-6);width:fit-content;max-width:100%}
+  .tab-btn{padding:var(--space-2) var(--space-6);border-radius:var(--radius-md);font-weight:700;font-size:0.875rem;color:var(--color-muted);transition:all var(--transition);border:none;background:none;cursor:pointer;white-space:nowrap}
+  .tab-btn.active{background:var(--color-primary);color:var(--white);box-shadow:var(--shadow-sm)}
+  .tab-btn:hover:not(.active){background:var(--color-surface);color:var(--color-primary)}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+
+  .calc-grid{display:grid;grid-template-columns:360px 1fr;gap:var(--space-6);align-items:start}
+  @media (max-width:760px){.calc-grid{grid-template-columns:1fr}}
+
+  .card{background:var(--color-surface);border-radius:var(--radius-xl);padding:var(--space-6);box-shadow:var(--shadow-sm);border:1px solid var(--color-border)}
+  .card-title{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-primary);margin-bottom:var(--space-5);padding-bottom:var(--space-3);border-bottom:2px solid var(--yellow);display:inline-block}
+  .section-label{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-faint);margin:var(--space-5) 0 var(--space-3)}
+
+  .field{margin-bottom:var(--space-4)}
+  label{display:block;font-size:0.8125rem;font-weight:700;color:var(--color-muted);margin-bottom:var(--space-2)}
+  label .hint{font-weight:400;color:var(--color-faint);font-size:0.75rem;display:block;margin-top:1px}
+  .help{font-size:0.75rem;color:var(--color-faint);line-height:1.5;margin-top:var(--space-2)}
+  .help b{color:var(--color-muted)}
+  .reality{font-size:0.75rem;color:var(--color-faint);line-height:1.5;margin-top:var(--space-2);display:flex;flex-wrap:wrap;align-items:baseline;gap:5px}
+  .reality b{color:var(--color-primary);font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .input-row{display:flex;align-items:center;gap:var(--space-2)}
+  .money-sym{font-size:0.9375rem;font-weight:700;color:var(--color-faint)}
+  .unit{font-size:0.8125rem;color:var(--color-faint);white-space:nowrap}
+  input[type="number"]{width:100%;border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);font-size:0.9375rem;background:var(--off-white);color:var(--color-text);transition:border-color var(--transition),box-shadow var(--transition);-moz-appearance:textfield}
+  input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none}
+  input[type="number"]:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(71,80,161,0.15)}
+  .range-row{display:flex;align-items:center;gap:var(--space-3)}
+  input[type="range"]{width:100%;height:4px;border-radius:99px;accent-color:var(--color-primary);cursor:pointer;border:none;background:var(--light-bg);padding:0}
+  .range-val{font-size:0.9375rem;font-weight:700;color:var(--color-primary);min-width:52px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+  details.adv{margin-top:var(--space-5);border-top:1px solid var(--color-border);padding-top:var(--space-4)}
+  details.adv summary{cursor:pointer;list-style:none;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-primary);display:flex;align-items:center;justify-content:space-between}
+  details.adv summary::-webkit-details-marker{display:none}
+  details.adv summary .chev{transition:transform .2s;color:var(--color-faint)}
+  details.adv[open] summary .chev{transform:rotate(90deg)}
+  .adv-note{font-size:0.75rem;color:var(--color-faint);line-height:1.5;margin:var(--space-3) 0 var(--space-4)}
+  .adv-body .field:last-child{margin-bottom:0}
+
+  .results{display:flex;flex-direction:column;gap:var(--space-4)}
+  .result-badge{display:inline-flex;align-items:center;gap:var(--space-2);background:rgba(71,80,161,0.09);border:1px solid rgba(71,80,161,0.2);border-radius:9999px;padding:var(--space-2) var(--space-4);font-size:0.8125rem;font-weight:700;color:var(--color-primary);align-self:flex-start}
+  .result-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);flex-shrink:0}
+
+  .revenue-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3)}
+  @media (max-width:420px){.revenue-grid{grid-template-columns:1fr}}
+  .revenue-kpi{background:var(--color-primary);border-radius:var(--radius-lg);padding:var(--space-5);color:var(--white)}
+  .revenue-kpi .kpi-label{font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.65);margin-bottom:var(--space-2)}
+  .revenue-kpi .kpi-value{color:var(--yellow);font-size:2rem;font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums}
+  .revenue-kpi .kpi-sub{font-size:0.75rem;color:rgba(255,255,255,0.6);margin-top:var(--space-2)}
+
+  .kpi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3)}
+  @media (max-width:560px){.kpi-strip{grid-template-columns:1fr 1fr}}
+  .kpi{background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4);border:1px solid var(--color-border);box-shadow:var(--shadow-sm)}
+  .kpi-label{font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--color-faint);margin-bottom:var(--space-1)}
+  .kpi .kpi-value{font-size:1.35rem;font-weight:900;color:var(--color-primary);line-height:1.05;font-variant-numeric:tabular-nums}
+  .kpi .kpi-value.pos{color:var(--yellow);filter:brightness(0.85)}
+  .kpi-sub{font-size:0.6875rem;color:var(--color-faint);margin-top:2px}
+
+  .actions{display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-2)}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:var(--space-3) var(--space-5);border-radius:var(--radius-md);font-weight:700;font-size:0.9375rem;text-decoration:none;transition:all var(--transition)}
+  .btn-primary{background:var(--color-primary);color:var(--white)}
+  .btn-primary:hover{filter:brightness(1.12)}
+  .btn-ghost{background:var(--color-surface);color:var(--color-primary);border:1.5px solid var(--color-border)}
+  .btn-ghost:hover{border-color:var(--color-primary)}
+  .cta-note{font-size:0.75rem;color:var(--color-faint);text-align:center;margin-top:var(--space-1);line-height:1.5}
+  .disclaimer{font-size:0.75rem;color:var(--color-faint);line-height:1.5;max-width:64ch;margin-top:var(--space-1)}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="roi-calculator">
+
+  <div class="tab-nav" role="tablist">
+    <button class="tab-btn" data-tab="b2c" type="button">Residential / D2D</button>
+    <button class="tab-btn" data-tab="b2b" type="button">B2B / Commercial</button>
+  </div>
+
+  <!-- ============================ B2B PANEL ============================ -->
+  <div class="tab-panel" id="panel-b2b">
+    <div class="calc-grid">
+      <div class="card">
+        <form id="b2b-form" autocomplete="off">
+          <div class="card-title">Estimate your ROI</div>
+          <div class="section-label">Your sales team</div>
+          <div class="field">
+            <label for="b2b-reps">Field sales reps</label>
+            <div class="range-row"><input type="range" id="b2b-reps" min="1" max="300" step="1" value="10"><span class="range-val"><span id="b2b-reps-out">10</span></span></div>
+          </div>
+          <div class="field">
+            <label for="b2b-dealsrep">Deals closed per rep, per year <span class="hint">a typical rep</span></label>
+            <input type="number" id="b2b-dealsrep" min="0" step="1" value="20">
+          </div>
+          <div class="field">
+            <label for="b2b-deal">Average deal size <span class="hint">annual contract value</span></label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2b-deal" min="0" step="1000" value="15000"></div>
+          </div>
+          <div class="field">
+            <label for="b2b-price">Price per user / month <span class="hint">billed annually; adjust to your quoted rate</span></label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2b-price" min="0" step="5" value="99"><span class="unit">/user·mo</span></div>
+          </div>
+          <div class="section-label">Field routing &amp; time</div>
+          <div class="field">
+            <label for="b2b-miles">Miles driven per rep, per day</label>
+            <div class="range-row"><input type="range" id="b2b-miles" min="0" max="400" step="10" value="60"><span class="range-val"><span id="b2b-miles-out">60</span></span></div>
+          </div>
+          <div class="field">
+            <label for="b2b-hourly">Fully-loaded cost per rep, per hour</label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2b-hourly" min="0" step="5" value="40"><span class="unit">/hr</span></div>
+            <p class="help">Base pay <b>plus</b> benefits, taxes &amp; overhead, divided by working hours — the real cost of an hour of a rep's time. Quick estimate: annual salary &divide; ~2,000 hours, then add ~30%. (e.g., a $60K rep &asymp; $30/hr base &asymp; <b>$40/hr</b> loaded.)</p>
+          </div>
+          <div class="field">
+            <label for="b2b-planhrs">Hours per week per rep on planning &amp; routing</label>
+            <div class="range-row"><input type="range" id="b2b-planhrs" min="0" max="20" step="1" value="5"><span class="range-val"><span id="b2b-planhrs-out">5</span></span></div>
+          </div>
+          <details class="adv">
+            <summary>SPOTIO impact assumptions <span class="chev">›</span></summary>
+            <div class="adv-body">
+              <p class="adv-note">Two separate value streams, so the same hours aren't counted twice: the <b>revenue lift</b> comes from better targeting, follow-up &amp; accountability; the <b>time &amp; fuel savings</b> come from less admin and windshield time. Every assumption is a slider — set them to your own.</p>
+              <div class="field">
+                <label for="b2b-lift">Revenue lift <span class="hint">better targeting &amp; follow-up</span></label>
+                <div class="range-row"><input type="range" id="b2b-lift" min="0" max="40" step="1" value="23"><span class="range-val">+<span id="b2b-lift-out">23</span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="b2b-routered">Fewer miles driven <span class="hint">route optimization (fuel + drive time)</span></label>
+                <div class="range-row"><input type="range" id="b2b-routered" min="0" max="40" step="1" value="20"><span class="range-val"><span id="b2b-routered-out">20</span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="b2b-planred">Less planning &amp; admin time <span class="hint">share of planning hours saved</span></label>
+                <div class="range-row"><input type="range" id="b2b-planred" min="0" max="90" step="5" value="75"><span class="range-val"><span id="b2b-planred-out">75</span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="b2b-fuelmile">Fuel cost per mile</label>
+                <div class="range-row"><input type="range" id="b2b-fuelmile" min="0.1" max="0.9" step="0.01" value="0.29"><span class="range-val">$<span id="b2b-fuelmile-out">0.29</span></span></div>
+              </div>
+              <div class="field">
+                <label for="b2b-margin">Gross margin <span class="hint">applied to added revenue</span></label>
+                <div class="range-row"><input type="range" id="b2b-margin" min="10" max="100" step="5" value="100"><span class="range-val"><span id="b2b-margin-out">100</span>%</span></div>
+              </div>
+            </div>
+          </details>
+        </form>
+      </div>
+      <div class="results">
+        <div class="result-badge"><span class="dot"></span>Illustrative example</div>
+        <div class="revenue-grid">
+          <div class="revenue-kpi"><div class="kpi-label">Total annual value</div><div class="kpi-value" id="b2b-hero">$0</div><div class="kpi-sub">added revenue + time &amp; fuel savings</div></div>
+          <div class="revenue-kpi"><div class="kpi-label">Return on investment</div><div class="kpi-value" id="b2b-roi-mult">0×</div><div class="kpi-sub">vs. your SPOTIO cost</div></div>
+        </div>
+        <div class="section-label" style="margin-top:var(--space-2)">Where the value comes from</div>
+        <div class="kpi-strip">
+          <div class="kpi"><div class="kpi-label">Added revenue / yr</div><div class="kpi-value pos" id="b2b-s-rev">$0</div><div class="kpi-sub">from <span id="b2b-s-deals">0</span> more deals</div></div>
+          <div class="kpi"><div class="kpi-label">Gas savings / yr</div><div class="kpi-value" id="b2b-s-gas">$0</div></div>
+          <div class="kpi"><div class="kpi-label">Planning time / yr</div><div class="kpi-value" id="b2b-s-plan">$0</div></div>
+          <div class="kpi"><div class="kpi-label">Driving time / yr</div><div class="kpi-value" id="b2b-s-drive">$0</div></div>
+          <div class="kpi"><div class="kpi-label">SPOTIO cost / yr</div><div class="kpi-value" id="b2b-s-cost">$0</div><div class="kpi-sub" id="b2b-s-cost-detail">10 reps · $99/user/mo</div></div>
+          <div class="kpi"><div class="kpi-label">Net gain / yr</div><div class="kpi-value pos" id="b2b-s-net">$0</div></div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">Get My Custom ROI →</a>
+          <a class="btn btn-ghost" href="https://spotio.com/solutions/field-sales-execution-b2b/" target="_blank" rel="noopener">Explore B2B Solutions</a>
+          <p class="cta-note">This is a directional example. Your tailored ROI — built on your real numbers — comes from a demo with a SPOTIO specialist.</p>
+        </div>
+        <p class="disclaimer">Illustrative estimate only — not a quote or guarantee. Figures use common field-sales assumptions and don't reflect any specific agreement. Your actual ROI depends on your team, market, and execution.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ B2C PANEL ============================ -->
+  <div class="tab-panel" id="panel-b2c">
+    <div class="calc-grid">
+      <div class="card">
+        <form id="b2c-form" autocomplete="off">
+          <div class="card-title">Estimate your ROI</div>
+          <div class="section-label">Your business today</div>
+          <div class="field">
+            <label for="b2c-reps">Field reps knocking doors</label>
+            <div class="range-row"><input type="range" id="b2c-reps" min="1" max="300" step="1" value="25"><span class="range-val"><span id="b2c-reps-out">25</span></span></div>
+          </div>
+          <div class="field">
+            <label for="b2c-closed">Closed deals per year <span class="hint">whole team, last 12 months</span></label>
+            <input type="number" id="b2c-closed" min="0" step="10" value="300">
+          </div>
+          <div class="field">
+            <label for="b2c-deal">Average contract value <span class="hint">revenue per closed job</span></label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2c-deal" min="0" step="1000" value="25000"></div>
+          </div>
+          <div class="field">
+            <label for="b2c-price">Price per user / month <span class="hint">billed annually; adjust to your quoted rate</span></label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2c-price" min="0" step="5" value="89"><span class="unit">/user·mo</span></div>
+          </div>
+          <div class="section-label">Your door-knocking activity</div>
+          <div class="field">
+            <label for="b2c-doorsyr">Doors knocked per rep, per year</label>
+            <input type="number" id="b2c-doorsyr" min="0" step="25" value="1575">
+            <p class="help">Not sure? Multiply <b>doors per day &times; field days per week &times; selling weeks per year</b>. Example: 15 &times; 3 &times; 35 &asymp; 1,575.</p>
+            <p class="reality" id="b2c-reality">&nbsp;</p>
+          </div>
+          <details class="adv">
+            <summary>SPOTIO impact assumptions <span class="chev">›</span></summary>
+            <div class="adv-body">
+              <p class="adv-note">SPOTIO drives results two ways: more doors per rep (less admin time) and more revenue per door (better targeting &amp; follow-up). The door boost is measured against how much you knock today, so its impact scales with your current activity.</p>
+              <div class="field">
+                <label for="b2c-addyr">Added doors per rep, per year <span class="hint">from less admin time</span></label>
+                <div class="range-row"><input type="range" id="b2c-addyr" min="0" max="800" step="10" value="210"><span class="range-val">+<span id="b2c-addyr-out">210</span></span></div>
+              </div>
+              <div class="field">
+                <label for="b2c-convlift">Better return on activity <span class="hint">more sales per door</span></label>
+                <div class="range-row"><input type="range" id="b2c-convlift" min="0" max="30" step="1" value="9"><span class="range-val">+<span id="b2c-convlift-out">9</span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="b2c-margin">Gross margin <span class="hint">set below 100% to score on profit</span></label>
+                <div class="range-row"><input type="range" id="b2c-margin" min="10" max="100" step="5" value="100"><span class="range-val"><span id="b2c-margin-out">100</span>%</span></div>
+              </div>
+            </div>
+          </details>
+        </form>
+      </div>
+      <div class="results">
+        <div class="result-badge"><span class="dot"></span>Illustrative example</div>
+        <div class="revenue-grid">
+          <div class="revenue-kpi"><div class="kpi-label">Added revenue / year</div><div class="kpi-value" id="b2c-hero">$0</div><div class="kpi-sub">from <span id="b2c-hero-deals">0</span> more jobs · +<span id="b2c-hero-lift">0</span>% lift</div></div>
+          <div class="revenue-kpi"><div class="kpi-label">Return on investment</div><div class="kpi-value" id="b2c-roi-mult">0×</div><div class="kpi-sub">vs. your SPOTIO cost</div></div>
+        </div>
+        <div class="section-label" style="margin-top:var(--space-2)">The numbers</div>
+        <div class="kpi-strip">
+          <div class="kpi"><div class="kpi-label">Added doors / yr</div><div class="kpi-value" id="b2c-f-door">0</div></div>
+          <div class="kpi"><div class="kpi-label">More deals / yr</div><div class="kpi-value pos" id="b2c-f-win">0</div></div>
+          <div class="kpi"><div class="kpi-label">Baseline revenue / yr</div><div class="kpi-value" id="b2c-s-base">$0</div></div>
+          <div class="kpi"><div class="kpi-label">SPOTIO cost / yr</div><div class="kpi-value" id="b2c-s-cost">$0</div><div class="kpi-sub" id="b2c-s-cost-detail">25 reps · $89/user/mo</div></div>
+          <div class="kpi"><div class="kpi-label">Net gain / yr</div><div class="kpi-value pos" id="b2c-s-net">$0</div></div>
+          <div class="kpi"><div class="kpi-label">Breakeven</div><div class="kpi-value" id="b2c-s-break">0</div></div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">Get My Custom ROI →</a>
+          <a class="btn btn-ghost" href="https://spotio.com/solutions/field-sales-execution-b2c/" target="_blank" rel="noopener">Explore B2C Solutions</a>
+          <p class="cta-note">This is a directional example. Your tailored ROI — built on your real numbers — comes from a demo with a SPOTIO specialist.</p>
+        </div>
+        <p class="disclaimer">Illustrative estimate only — not a quote or guarantee. Figures use common field-sales assumptions and don't reflect any specific agreement. Your actual ROI depends on your team, market, and execution.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---------- shared helpers ----------
+var SROI = {
+  money: function(n){ return '$' + Math.round(n).toLocaleString('en-US'); },
+  moneyShort: function(n){
+    n = Math.round(n);
+    if(Math.abs(n) >= 1000000) return '$' + (n/1000000).toFixed(Math.abs(n)<10000000?1:0).replace(/\.0$/,'') + 'M';
+    if(Math.abs(n) >= 10000)   return '$' + Math.round(n/1000) + 'K';
+    return '$' + n.toLocaleString('en-US');
+  },
+  num: function(n,d){ d=d||0; return Number(n).toLocaleString('en-US',{maximumFractionDigits:d}); },
+  safeDiv: function(a,b){ return (!b || !isFinite(b)) ? 0 : a/b; }
+};
+</script>
+
+<script>
+// ---------- B2B calculator ----------
+(function(){
+  var P='b2b-';
+  var $ = function(id){ return document.getElementById(P+id); };
+  var money=SROI.money, moneyShort=SROI.moneyShort, num=SROI.num, safeDiv=SROI.safeDiv;
+  var outs = {reps:'reps-out',miles:'miles-out',planhrs:'planhrs-out',lift:'lift-out',routered:'routered-out',planred:'planred-out',margin:'margin-out'};
+  function readInputs(){
+    return {
+      reps:+$('reps').value, dealsrep:Math.max(0,+$('dealsrep').value||0), deal:Math.max(0,+$('deal').value||0), price:Math.max(0,+$('price').value||0),
+      miles:+$('miles').value, hourly:Math.max(0,+$('hourly').value||0), planhrs:+$('planhrs').value,
+      lift:(+$('lift').value)/100, routered:(+$('routered').value)/100, planred:(+$('planred').value)/100,
+      fuelmile:Math.max(0,+$('fuelmile').value||0), margin:(+$('margin').value)/100
+    };
+  }
+  function calc(v){
+    var baseDeals = v.reps * v.dealsrep;
+    var baseRev   = baseDeals * v.deal;
+    var addedDeals = baseDeals * v.lift;
+    var addedRev   = baseRev * v.lift;
+    var gas      = v.fuelmile * v.reps * 20 * 12 * v.routered * v.miles;
+    var planning = v.planhrs * v.hourly * v.reps * v.planred * 52;
+    var driving  = (v.miles/45) * v.reps * v.routered * v.hourly * 52;
+    var savings  = gas + planning + driving;
+    var revValue   = addedRev * v.margin;
+    var totalValue = revValue + savings;
+    var costYear = v.reps * v.price * 12;
+    var roi      = safeDiv(totalValue, costYear);
+    var netYear  = totalValue - costYear;
+    return {reps:v.reps, price:v.price, costYear:costYear, addedDeals:addedDeals, addedRev:revValue,
+            gas:gas, planning:planning, driving:driving, totalValue:totalValue, roi:roi, netYear:netYear};
+  }
+  function render(){
+    var v = readInputs();
+    for(var k in outs){ if($(k)) $(outs[k]).textContent = $(k).value; }
+    $('fuelmile-out').textContent = (+$('fuelmile').value).toFixed(2);
+    var r = calc(v);
+    $('hero').textContent = moneyShort(r.totalValue);
+    $('roi-mult').textContent = (r.roi >= 100 ? Math.round(r.roi) : r.roi.toFixed(1).replace(/\.0$/,'')) + '×';
+    $('s-deals').textContent = num(r.addedDeals, r.addedDeals < 10 ? 1 : 0);
+    $('s-rev').textContent   = money(r.addedRev);
+    $('s-gas').textContent   = money(r.gas);
+    $('s-plan').textContent  = money(r.planning);
+    $('s-drive').textContent = money(r.driving);
+    $('s-cost').textContent  = money(r.costYear);
+    $('s-cost-detail').textContent = r.reps + (r.reps===1?' rep · $':' reps · $') + num(r.price) + '/user/mo';
+    $('s-net').textContent   = money(r.netYear);
+    $('s-net').classList.toggle('pos', r.netYear >= 0);
+  }
+  var form = $('form');
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+  render();
+})();
+</script>
+
+<script>
+// ---------- B2C calculator ----------
+(function(){
+  var P='b2c-';
+  var $ = function(id){ return document.getElementById(P+id); };
+  var money=SROI.money, moneyShort=SROI.moneyShort, num=SROI.num, safeDiv=SROI.safeDiv;
+  var outs = {reps:'reps-out',addyr:'addyr-out',convlift:'convlift-out',margin:'margin-out'};
+  function readInputs(){
+    return {
+      reps:+$('reps').value, closed:Math.max(0,+$('closed').value||0), deal:Math.max(0,+$('deal').value||0), price:Math.max(0,+$('price').value||0),
+      doorsyr:Math.max(0,+$('doorsyr').value||0), addyr:+$('addyr').value,
+      convlift:(+$('convlift').value)/100, margin:(+$('margin').value)/100
+    };
+  }
+  function calc(v){
+    var doorsYear = v.doorsyr * v.reps;
+    var baseDeals = v.closed;
+    var baseRev   = baseDeals * v.deal;
+    var dealsPerDoor = safeDiv(baseDeals, doorsYear);
+    var addedFrac  = safeDiv(v.addyr, v.doorsyr);
+    var liftFactor = (1 + addedFrac) * (1 + v.convlift) - 1;
+    var incDeals = baseDeals * liftFactor;
+    var incRev   = incDeals * v.deal;
+    var costYear = v.reps * v.price * 12;
+    var value    = incRev * v.margin;
+    var roi      = safeDiv(value, costYear);
+    var netYear  = value - costYear;
+    var breakeven = safeDiv(costYear, v.deal * v.margin);
+    var incDoorsY = v.addyr * v.reps;
+    return {reps:v.reps, price:v.price, costYear:costYear, baseRev:baseRev, incRev:incRev, incDeals:incDeals,
+            roi:roi, netYear:netYear, breakeven:breakeven, incDoorsY:incDoorsY, dealsPerDoor:dealsPerDoor, doorsYear:doorsYear, liftPct: liftFactor * 100};
+  }
+  function render(){
+    var v = readInputs();
+    for(var k in outs){ if($(k)) $(outs[k]).textContent = $(k).value; }
+    var r = calc(v);
+    if(r.dealsPerDoor > 0 && r.doorsYear > 0){
+      var perSale = Math.round(1 / r.dealsPerDoor);
+      $('reality').innerHTML = 'Reality check: <b>&asymp; 1 sale per ' + num(perSale) + ' doors</b> <span>(' + (r.dealsPerDoor*100).toFixed(r.dealsPerDoor<0.1?1:0) + '% of ' + num(r.doorsYear) + ' doors/yr)</span>';
+    } else { $('reality').innerHTML = '&nbsp;'; }
+    $('hero').textContent = moneyShort(r.incRev);
+    $('hero-deals').textContent = num(r.incDeals, r.incDeals < 10 ? 1 : 0);
+    $('hero-lift').textContent = num(r.liftPct, r.liftPct < 10 ? 1 : 0);
+    $('roi-mult').textContent = (r.roi >= 100 ? Math.round(r.roi) : r.roi.toFixed(1).replace(/\.0$/,'')) + '×';
+    $('f-door').textContent = num(r.incDoorsY);
+    $('f-win').textContent  = num(r.incDeals, r.incDeals < 10 ? 1 : 0);
+    $('s-base').textContent = money(r.baseRev);
+    $('s-cost').textContent = money(r.costYear);
+    $('s-cost-detail').textContent = r.reps + (r.reps===1?' rep · $':' reps · $') + num(r.price) + '/user/mo';
+    $('s-net').textContent = money(r.netYear);
+    $('s-net').classList.toggle('pos', r.netYear >= 0);
+    $('s-break').textContent = r.breakeven < 1 ? '<1 job' : num(Math.ceil(r.breakeven)) + ' jobs';
+  }
+  var form = $('form');
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+  render();
+})();
+</script>
+
+<script>
+// ---------- tabs + auto-resize ----------
+(function(){
+  var lastH=0;
+  function report(){
+    var h=Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    if(h && h!==lastH){ lastH=h; parent.postMessage({spotioRoiHeight:h, calc:'roi'}, '*'); }
+  }
+  var tabs = [].slice.call(document.querySelectorAll('.tab-btn'));
+  var panels = {b2b:document.getElementById('panel-b2b'), b2c:document.getElementById('panel-b2c')};
+  function activate(name){
+    if(!panels[name]) name='b2c';
+    tabs.forEach(function(b){ var on=b.getAttribute('data-tab')===name; b.classList.toggle('active',on); b.setAttribute('aria-selected',on?'true':'false'); });
+    Object.keys(panels).forEach(function(k){ panels[k].classList.toggle('active', k===name); });
+    report();
+  }
+  tabs.forEach(function(b){ b.addEventListener('click', function(){ activate(b.getAttribute('data-tab')); }); });
+  // pre-select from ?tab= (so each WordPress page opens on the right tab)
+  var t='';
+  try{ t=(new URLSearchParams(window.location.search).get('tab')||'').toLowerCase(); }catch(e){}
+  activate(t==='b2b'?'b2b':'b2c');
+
+  window.addEventListener('load', report);
+  window.addEventListener('resize', report);
+  try{ new ResizeObserver(report).observe(document.body); }catch(e){}
+  setInterval(report, 700);
+})();
+</script>
+</body>
+</html>
