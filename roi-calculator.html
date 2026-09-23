@@ -1,794 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Territory Size & Contact Rate Calculator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPOTIO ROI Calculator</title>
 <style>
-:root {
-  --gold:      #FFC300;
-  --charcoal:  #28272D;
-  --blue:      #2532A2;
-  --lightgrey: #F4F6F7;
-  --midgrey:   #69686C;
-  --green:     #428960;
-  --white:     #FFFFFF;
-  --warm:      #FAF9F5;
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap');
+  :root{
+    --gold:#FFC300; --charcoal:#28272D; --blue:#2532A2; --lightgrey:#F4F6F7; --midgrey:#69686C;
+    --white:#FFFFFF; --green:#428960; --error:#DA747B; --warm:#FAF9F5;
+    --color-bg:var(--lightgrey); --color-surface:var(--white); --color-border:#E2E5E7;
+    --color-text:var(--charcoal); --color-muted:var(--midgrey); --color-faint:var(--midgrey);
+    --color-primary:var(--charcoal); --color-accent:var(--gold); --color-label:var(--blue);
+    --radius-btn:9px; --radius-card:10px; --radius-input:10px; --radius-pill:999px; --radius-tag:6px;
+    --space-1:0.25rem; --space-2:0.5rem; --space-3:0.75rem; --space-4:1rem; --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem;
+    --shadow-sm:0 1px 3px rgba(40,39,45,0.08); --shadow-md:0 4px 12px rgba(40,39,45,0.10);
+    --font:'Archivo','Helvetica Neue',Arial,sans-serif; --transition:180ms cubic-bezier(0.16,1,0.3,1);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-font-smoothing:antialiased}
+  body{font-family:var(--font);font-size:16px;color:var(--color-text);background:var(--color-bg);line-height:1.6}
+  .wrap{max-width:1000px;margin:0 auto;padding:var(--space-6) var(--space-4)}
+  img,svg{display:block;max-width:100%}
+  button,input,select{font:inherit;color:inherit}
+  h1,h2,h3,h4,h5{line-height:1.2}
 
-  --color-bg:       var(--lightgrey);
-  --color-surface:  var(--white);
-  --color-border:   #E2E5E7;
-  --color-text:     var(--charcoal);
-  --color-muted:    var(--midgrey);
-  --color-faint:    var(--midgrey);
-  --color-primary:  var(--charcoal);
-  --color-accent:   var(--gold);
+  /* ── Tabs ── */
+  .tab-nav{display:flex;gap:var(--space-1);background:var(--white);border:1px solid var(--color-border);border-radius:var(--radius-card);padding:var(--space-1);margin-bottom:var(--space-6);width:fit-content;max-width:100%}
+  .tab-btn{padding:var(--space-2) var(--space-6);border-radius:7px;font-weight:700;font-size:0.95rem;color:var(--midgrey);transition:all var(--transition);border:none;background:none;cursor:pointer;white-space:nowrap}
+  .tab-btn.active{background:var(--charcoal);color:var(--white)}
+  .tab-btn:hover:not(.active){background:var(--lightgrey);color:var(--charcoal)}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
 
-  --radius-btn:   9px;
-  --radius-card:  10px;
-  --radius-input: 10px;
-  --radius-pill:  999px;
+  .calc-grid{display:grid;grid-template-columns:360px 1fr;gap:var(--space-6);align-items:start}
+  @media (max-width:760px){.calc-grid{grid-template-columns:1fr}}
 
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
+  .card{background:var(--color-surface);border-radius:var(--radius-card);padding:var(--space-6);box-shadow:var(--shadow-sm);border:1px solid var(--color-border)}
+  .card-title{font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--blue);margin-bottom:var(--space-5);padding-bottom:var(--space-3);border-bottom:2px solid var(--gold);display:inline-block}
+  .section-label{font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--blue);margin:var(--space-5) 0 var(--space-3)}
 
-  --shadow-sm: 0 1px 3px rgba(40,39,45,0.08);
-  --shadow-md: 0 4px 12px rgba(40,39,45,0.10);
+  .field{margin-bottom:var(--space-4)}
+  label{display:block;font-size:0.95rem;font-weight:700;color:var(--charcoal);margin-bottom:var(--space-2)}
+  label .hint{font-weight:400;color:var(--midgrey);font-size:0.85rem;display:block;margin-top:1px}
+  .help{font-size:0.85rem;color:var(--midgrey);line-height:1.5;margin-top:var(--space-2)}
+  .help b{color:var(--charcoal)}
+  .reality{font-size:0.85rem;color:var(--midgrey);line-height:1.5;margin-top:var(--space-2);display:flex;flex-wrap:wrap;align-items:baseline;gap:5px}
+  .reality b{color:var(--blue);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .input-row{display:flex;align-items:center;gap:var(--space-2)}
+  .money-sym{font-size:1.05rem;font-weight:700;color:var(--midgrey)}
+  .unit{font-size:0.875rem;color:var(--midgrey);white-space:nowrap}
+  input[type="number"]{width:100%;border:1.5px solid var(--color-border);border-radius:var(--radius-input);padding:var(--space-3) var(--space-3);font-size:1.05rem;background:var(--lightgrey);color:var(--charcoal);transition:border-color var(--transition);-moz-appearance:textfield}
+  input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none}
+  input[type="number"]:focus{outline:none;border-color:var(--gold)}
+  .range-row{display:flex;align-items:center;gap:var(--space-3)}
+  input[type="range"]{width:100%;height:4px;border-radius:99px;accent-color:var(--blue);cursor:pointer;border:none;background:var(--lightgrey);padding:0}
+  .range-val{font-size:1.05rem;font-weight:700;color:var(--blue);min-width:56px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 
-  --font: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
-  --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
+  details.adv{margin-top:var(--space-5);border-top:1px solid var(--color-border);padding-top:var(--space-4)}
+  details.adv summary{cursor:pointer;list-style:none;font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--blue);display:flex;align-items:center;justify-content:space-between}
+  details.adv summary::-webkit-details-marker{display:none}
+  details.adv summary .chev{transition:transform .2s;color:var(--midgrey);font-size:1.1rem}
+  details.adv[open] summary .chev{transform:rotate(90deg)}
+  .adv-note{font-size:0.85rem;color:var(--midgrey);line-height:1.5;margin:var(--space-3) 0 var(--space-4)}
+  .adv-body .field:last-child{margin-bottom:0}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { -webkit-font-smoothing: antialiased; }
-body {
-  font-family: var(--font);
-  font-size: 16px;
-  color: var(--color-text);
-  background: var(--color-bg);
-  padding: var(--space-6) var(--space-4);
-  line-height: 1.6;
-}
-img, svg { display: block; max-width: 100%; }
-button, input, select { font: inherit; color: inherit; }
-button { cursor: pointer; border: none; background: none; }
-h1,h2,h3,h4,h5 { line-height: 1.2; }
+  .results{display:flex;flex-direction:column;gap:var(--space-4)}
+  .result-badge{display:inline-flex;align-items:center;gap:var(--space-2);background:rgba(37,50,162,0.08);border:1px solid rgba(37,50,162,0.22);border-radius:var(--radius-pill);padding:var(--space-2) var(--space-4);font-size:0.9rem;font-weight:700;color:var(--blue);align-self:flex-start}
+  .result-badge .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
-/* ── Tabs ── */
-.tab-nav {
-  display: flex;
-  gap: var(--space-1);
-  background: var(--white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  padding: var(--space-1);
-  margin-bottom: var(--space-6);
-  width: fit-content;
-}
-.tab-btn {
-  padding: var(--space-2) var(--space-6);
-  border-radius: 7px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--midgrey);
-  transition: all var(--transition);
-}
-.tab-btn.active {
-  background: var(--charcoal);
-  color: var(--white);
-}
-.tab-btn:hover:not(.active) {
-  background: var(--lightgrey);
-  color: var(--charcoal);
-}
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
+  .revenue-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+  @media (max-width:420px){.revenue-grid{grid-template-columns:1fr}}
+  .revenue-kpi{background:var(--charcoal);border-radius:var(--radius-card);padding:var(--space-6);color:var(--white);display:flex;flex-direction:column;justify-content:center;min-height:170px}
+  .revenue-kpi .kpi-label{font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.72);margin-bottom:var(--space-3)}
+  .revenue-kpi .kpi-value{color:var(--gold);font-size:2.9rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .revenue-kpi .kpi-sub{font-size:0.85rem;color:rgba(255,255,255,0.68);margin-top:var(--space-3)}
 
-/* ── Calculator Grid ── */
-.calc-grid {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: var(--space-6);
-  align-items: start;
-}
-@media (max-width: 720px) {
-  .calc-grid { grid-template-columns: 1fr; }
-}
+  .kpi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3)}
+  @media (max-width:560px){.kpi-strip{grid-template-columns:1fr 1fr}}
+  .kpi{background:var(--color-surface);border-radius:var(--radius-card);padding:var(--space-5) var(--space-4);border:1px solid var(--color-border);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;justify-content:center;min-height:104px}
+  .kpi.break{border:1.5px solid var(--gold);background:rgba(255,195,0,0.06)}
+  .kpi-label{font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--midgrey);margin-bottom:var(--space-2)}
+  .kpi .kpi-value{font-size:1.7rem;font-weight:700;color:var(--charcoal);line-height:1.05;font-variant-numeric:tabular-nums}
+  .kpi .kpi-value.pos{color:var(--green)}
+  .kpi .kpi-value.roi{color:var(--blue)}
+  .kpi-sub{font-size:0.8125rem;color:var(--midgrey);margin-top:3px}
 
-/* ── Cards ── */
-.card {
-  background: var(--color-surface);
-  border-radius: var(--radius-card);
-  padding: var(--space-6);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
-}
-.card-title {
-  font-size: 0.875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--blue);
-  margin-bottom: var(--space-4);
-  padding-bottom: var(--space-3);
-  border-bottom: 2px solid var(--gold);
-  display: inline-block;
-}
+  .actions{display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-2)}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:var(--radius-btn);font-weight:700;font-size:1.05rem;text-decoration:none;transition:all var(--transition);border:1px solid transparent}
+  .btn-primary{background:var(--gold);color:var(--charcoal);border-color:var(--gold)}
+  .btn-primary:hover{background:var(--charcoal);color:var(--gold);border-color:var(--gold)}
+  .btn-ghost{background:transparent;color:var(--charcoal);border:1px solid var(--gold)}
+  .btn-ghost:hover{background:rgba(255,195,0,0.10)}
+  .cta-note{font-size:0.85rem;color:var(--midgrey);text-align:center;margin-top:var(--space-1);line-height:1.5}
+  .disclaimer{font-size:0.85rem;color:var(--midgrey);line-height:1.5;max-width:64ch;margin-top:var(--space-1)}
 
-/* ── Form Elements ── */
-.field { margin-bottom: var(--space-4); }
-.field:last-child { margin-bottom: 0; }
-label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--charcoal);
-  margin-bottom: var(--space-1);
-}
-label .hint {
-  font-weight: 400;
-  color: var(--midgrey);
-  font-size: 0.8rem;
-  display: block;
-  margin-top: 1px;
-}
-.input-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-input[type="number"] {
-  width: 100%;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-input);
-  padding: var(--space-3) var(--space-3);
-  font-size: 1rem;
-  color: var(--charcoal);
-  background: var(--lightgrey);
-  transition: border-color var(--transition);
-  -moz-appearance: textfield;
-}
-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-input[type="number"]:focus {
-  outline: none;
-  border-color: var(--gold);
-}
-.unit {
-  font-size: 0.85rem;
-  color: var(--midgrey);
-  white-space: nowrap;
-  min-width: 60px;
-}
-input[type="range"] {
-  width: 100%;
-  height: 4px;
-  border-radius: 99px;
-  accent-color: var(--blue);
-  cursor: pointer;
-  border: none;
-  background: var(--lightgrey);
-  padding: 0;
-}
-.range-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-.range-val {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--blue);
-  min-width: 48px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── KPI Strip ── */
-.kpi-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
-}
-@media (max-width: 560px) { .kpi-strip { grid-template-columns: 1fr 1fr; } }
-.kpi {
-  background: var(--color-surface);
-  border-radius: var(--radius-card);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-}
-.kpi-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--midgrey);
-  margin-bottom: var(--space-1);
-}
-.kpi-value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--charcoal);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-.kpi-value.highlight { color: var(--green); }
-
-/* ── Result Badge ── */
-.result-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  background: rgba(37,50,162,0.08);
-  border: 1px solid rgba(37,50,162,0.22);
-  border-radius: var(--radius-pill);
-  padding: var(--space-2) var(--space-4);
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--blue);
-  margin-bottom: var(--space-4);
-}
-.result-badge .dot {
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: var(--gold);
-  flex-shrink: 0;
-}
-
-/* ── Revenue KPIs ── */
-.revenue-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
-}
-@media (max-width: 560px) { .revenue-grid { grid-template-columns: 1fr 1fr; } }
-.revenue-kpi {
-  background: var(--charcoal);
-  border-radius: var(--radius-card);
-  padding: var(--space-4);
-  color: var(--white);
-}
-.revenue-kpi .kpi-label { color: rgba(255,255,255,0.72); }
-.revenue-kpi .kpi-value { color: var(--gold); font-size: 1.5rem; }
-
-/* ── Passes Table ── */
-.passes-table-wrap {
-  overflow-x: auto;
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
-}
-.passes-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-  background: var(--white);
-}
-.passes-table thead {
-  background: var(--charcoal);
-  color: var(--white);
-}
-.passes-table thead th {
-  padding: var(--space-3) var(--space-4);
-  text-align: left;
-  font-weight: 700;
-  font-size: 0.78rem;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-}
-.passes-table tbody tr {
-  border-bottom: 1px solid var(--lightgrey);
-  transition: background var(--transition);
-}
-.passes-table tbody tr:hover { background: var(--lightgrey); }
-.passes-table tbody tr.target-row {
-  background: rgba(255,195,0,0.16);
-  font-weight: 700;
-}
-.passes-table td {
-  padding: var(--space-3) var(--space-4);
-  color: var(--color-muted);
-}
-.passes-table td:first-child { color: var(--color-text); font-weight: 700; }
-
-/* ── Progress Bar ── */
-.progress-wrap {
-  background: var(--lightgrey);
-  border-radius: 99px;
-  height: 8px;
-  overflow: hidden;
-}
-.progress-bar {
-  height: 100%;
-  border-radius: 99px;
-  background: linear-gradient(90deg, var(--blue), var(--gold));
-  transition: width 0.5s cubic-bezier(0.16,1,0.3,1);
-}
-
-/* ── Misc ── */
-.divider { border: none; border-top: 1px solid var(--color-border); margin: var(--space-5) 0; }
-.section-label {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--blue);
-  margin: var(--space-5) 0 var(--space-3);
-}
-.tooltip-wrap { position: relative; display: inline-block; }
-.tooltip-icon {
-  width: 15px; height: 15px;
-  border-radius: 50%;
-  background: var(--lightgrey);
-  color: var(--midgrey);
-  font-size: 10px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: help;
-  margin-left: 4px;
-  vertical-align: middle;
-}
-.tooltip-box {
-  display: none;
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 0;
-  background: var(--charcoal);
-  color: var(--white);
-  font-size: 0.8rem;
-  padding: var(--space-2) var(--space-3);
-  border-radius: 8px;
-  width: 220px;
-  z-index: 10;
-  font-weight: 400;
-  line-height: 1.5;
-  pointer-events: none;
-}
-.tooltip-wrap:hover .tooltip-box { display: block; }
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
 </style>
 </head>
 <body>
+<div class="wrap" id="roi-calculator">
 
-  <!-- Tab Nav -->
-  <div class="tab-nav" role="tablist" aria-label="Calculator mode">
-    <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-b2b" id="tab-b2b" onclick="switchTab('b2b')">Commercial / B2B</button>
-    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-residential" id="tab-residential" onclick="switchTab('residential')">Residential / D2D</button>
+  <div class="tab-nav" role="tablist">
+    <button class="tab-btn" data-tab="b2b" type="button">Commercial / B2B</button>
+    <button class="tab-btn" data-tab="b2c" type="button">Residential / D2D</button>
   </div>
 
-  <!-- ══ RESIDENTIAL TAB ══ -->
-  <div id="panel-residential" class="tab-panel" role="tabpanel" aria-labelledby="tab-residential">
+  <!-- ============================ B2B PANEL ============================ -->
+  <div class="tab-panel" id="panel-b2b">
     <div class="calc-grid">
-
       <div class="card">
-        <div class="card-title">Territory Inputs</div>
-
-        <div class="field">
-          <label>Territory Area <span class="hint">Measure at google.com/maps → right-click → Measure Distance</span></label>
-          <div class="input-row">
-            <input type="number" id="r-area" value="0.5" min="0.01" step="0.1" oninput="calcR()">
-            <span class="unit">sq miles</span>
+        <form id="b2b-form" autocomplete="off">
+          <div class="card-title">Estimate your ROI</div>
+          <div class="section-label">Your sales team</div>
+          <div class="field">
+            <label for="b2b-reps">Field sales reps</label>
+            <div class="range-row"><input type="range" id="b2b-reps" min="1" max="1000" step="1" value="25"><span class="range-val"><span id="b2b-reps-out">25</span></span></div>
           </div>
-        </div>
-
-        <div class="field">
-          <label>Average Lot Size
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">0.25 acres = standard quarter-acre lot. Use 0.1 for urban/dense, 0.5+ for suburban.</span></span>
-            <span class="hint">Default 0.25 ac = typical suburban lot</span>
-          </label>
-          <div class="input-row">
-            <input type="number" id="r-lot" value="0.25" min="0.01" step="0.05" oninput="calcR()">
-            <span class="unit">acres</span>
+          <div class="field">
+            <label for="b2b-dealsrep">Deals closed per rep, per year <span class="hint">a typical rep</span></label>
+            <input type="number" id="b2b-dealsrep" min="0" step="1" value="20">
           </div>
-        </div>
-
-        <div class="field">
-          <label>Knocks per Day
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Industry average is 50–100 doors per rep per day for residential D2D.</span></span>
-          </label>
-          <div class="input-row">
-            <input type="number" id="r-knocks" value="50" min="1" max="300" oninput="calcR()">
-            <span class="unit">doors</span>
+          <div class="field">
+            <label for="b2b-deal">Average deal size <span class="hint">annual contract value</span></label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2b-deal" min="0" step="1000" value="15000"></div>
           </div>
-        </div>
-
-        <div class="field">
-          <label>Base Contact Rate
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">How many doors answer on first knock. Industry average is 20–30%. Higher in afternoons (3–8 PM) and Saturday mornings.</span></span>
-          </label>
-          <div class="range-row">
-            <input type="range" id="r-cr" min="5" max="60" value="25" oninput="syncRange('r-cr','r-cr-val','%'); calcR()">
-            <span class="range-val" id="r-cr-val">25%</span>
+          <div class="field">
+            <label for="b2b-price">Price per user / month <span class="hint">billed annually; adjust to your quoted rate</span></label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2b-price" min="0" step="5" value="99"><span class="unit">/user·mo</span></div>
           </div>
-        </div>
-
-        <div class="field">
-          <label>Pass Decay Rate
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Contact rate typically decreases on repeat passes as residents recognize canvassers. 8% is a conservative default.</span></span>
-          </label>
-          <div class="range-row">
-            <input type="range" id="r-decay" min="0" max="25" value="8" oninput="syncRange('r-decay','r-decay-val','%'); calcR()">
-            <span class="range-val" id="r-decay-val">8%</span>
+          <div class="section-label">Field routing &amp; time</div>
+          <div class="field">
+            <label for="b2b-miles">Miles driven per rep, per day</label>
+            <div class="range-row"><input type="range" id="b2b-miles" min="0" max="400" step="10" value="60"><span class="range-val"><span id="b2b-miles-out">60</span></span></div>
           </div>
-        </div>
-
-        <hr class="divider">
-        <div class="section-label">Revenue Potential</div>
-
-        <div class="field">
-          <label>Conversion Rate (contact → sale)</label>
-          <div class="range-row">
-            <input type="range" id="r-conv" min="1" max="40" value="10" oninput="syncRange('r-conv','r-conv-val','%'); calcR()">
-            <span class="range-val" id="r-conv-val">10%</span>
+          <div class="field">
+            <label for="b2b-hourly">Fully-loaded cost per rep, per hour</label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2b-hourly" min="0" step="5" value="40"><span class="unit">/hr</span></div>
+            <p class="help">Base pay <b>plus</b> benefits, taxes &amp; overhead, divided by working hours — the real cost of an hour of a rep's time. Quick estimate: annual salary &divide; ~2,000 hours, then add ~30%. (e.g., a $60K rep &asymp; $30/hr base &asymp; <b>$40/hr</b> loaded.)</p>
           </div>
-        </div>
-
-        <div class="field">
-          <label>Average Deal Value</label>
-          <div class="input-row">
-            <span class="unit" style="min-width:16px">$</span>
-            <input type="number" id="r-deal" value="1200" min="1" step="100" oninput="calcR()">
+          <div class="field">
+            <label for="b2b-planhrs">Hours per week per rep on planning &amp; routing</label>
+            <div class="range-row"><input type="range" id="b2b-planhrs" min="0" max="20" step="1" value="5"><span class="range-val"><span id="b2b-planhrs-out">5</span></span></div>
           </div>
-        </div>
+          <details class="adv">
+            <summary>SPOTIO impact assumptions <span class="chev">›</span></summary>
+            <div class="adv-body">
+              <p class="adv-note">Two separate value streams, so the same hours aren't counted twice: the <b>revenue lift</b> comes from better targeting, follow-up &amp; accountability; the <b>time &amp; fuel savings</b> come from less admin and windshield time. Every assumption is a slider — set them to your own.</p>
+              <div class="field">
+                <label for="b2b-lift">Revenue lift <span class="hint">better targeting &amp; follow-up</span></label>
+                <div class="range-row"><input type="range" id="b2b-lift" min="0" max="40" step="1" value="23"><span class="range-val">+<span id="b2b-lift-out">23</span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="b2b-routered">Fewer miles driven <span class="hint">route optimization (fuel + drive time)</span></label>
+                <div class="range-row"><input type="range" id="b2b-routered" min="0" max="40" step="1" value="20"><span class="range-val"><span id="b2b-routered-out">20</span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="b2b-planred">Less planning &amp; admin time <span class="hint">share of planning hours saved</span></label>
+                <div class="range-row"><input type="range" id="b2b-planred" min="0" max="90" step="5" value="75"><span class="range-val"><span id="b2b-planred-out">75</span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="b2b-fuelmile">Fuel cost per mile</label>
+                <div class="range-row"><input type="range" id="b2b-fuelmile" min="0.1" max="0.9" step="0.01" value="0.29"><span class="range-val">$<span id="b2b-fuelmile-out">0.29</span></span></div>
+              </div>
+              <div class="field">
+                <label for="b2b-margin">Gross margin <span class="hint">applied to added revenue</span></label>
+                <div class="range-row"><input type="range" id="b2b-margin" min="10" max="100" step="5" value="100"><span class="range-val"><span id="b2b-margin-out">100</span>%</span></div>
+              </div>
+            </div>
+          </details>
+        </form>
       </div>
-
-      <!-- Results -->
-      <div>
-        <div class="kpi-strip">
-          <div class="kpi">
-            <div class="kpi-label">Houses in Territory</div>
-            <div class="kpi-value" id="r-kpi-houses">853</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Passes to 75%</div>
-            <div class="kpi-value highlight" id="r-kpi-passes">5</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Total Days</div>
-            <div class="kpi-value" id="r-kpi-days">52</div>
-          </div>
-        </div>
-
-        <div class="result-badge"><span class="dot"></span><span id="r-summary">5 passes · 52 days to reach 75% market penetration</span></div>
-
+      <div class="results">
+        <div class="result-badge"><span class="dot"></span>Illustrative example</div>
         <div class="revenue-grid">
-          <div class="revenue-kpi">
-            <div class="kpi-label">Total Contacts (75%)</div>
-            <div class="kpi-value" id="r-kpi-contacts">—</div>
-          </div>
-          <div class="revenue-kpi">
-            <div class="kpi-label">Projected Sales</div>
-            <div class="kpi-value" id="r-kpi-sales">—</div>
-          </div>
-          <div class="revenue-kpi">
-            <div class="kpi-label">Pipeline Value</div>
-            <div class="kpi-value" id="r-kpi-revenue">—</div>
-          </div>
+          <div class="revenue-kpi"><div class="kpi-label">Added revenue / year</div><div class="kpi-value" id="b2b-hero">$0</div><div class="kpi-sub">from <span id="b2b-hero-deals">0</span> more deals closed</div></div>
+          <div class="revenue-kpi"><div class="kpi-label">Revenue lift</div><div class="kpi-value" id="b2b-hero-lift">+0%</div><div class="kpi-sub">on your current <span id="b2b-hero-base">$0</span></div></div>
         </div>
-
-        <div class="passes-table-wrap">
-          <table class="passes-table" aria-label="Pass-by-pass results">
-            <thead>
-              <tr>
-                <th>Pass</th>
-                <th>Days This Pass</th>
-                <th>Cum. Days</th>
-                <th>Contacts</th>
-                <th>Remaining</th>
-                <th>Total Contacted</th>
-                <th>Contact Rate</th>
-                <th>Progress</th>
-              </tr>
-            </thead>
-            <tbody id="r-tbody"></tbody>
-          </table>
+        <div class="section-label" style="margin-top:var(--space-2)">The full picture</div>
+        <div class="kpi-strip">
+          <div class="kpi break"><div class="kpi-label">Deals to cover SPOTIO cost</div><div class="kpi-value pos" id="b2b-s-break">0</div><div class="kpi-sub">it pays for itself, rest is upside</div></div>
+          <div class="kpi"><div class="kpi-label">More deals / yr</div><div class="kpi-value pos" id="b2b-s-deals">0</div></div>
+          <div class="kpi"><div class="kpi-label">Time &amp; fuel savings</div><div class="kpi-value" id="b2b-s-save">$0</div><div class="kpi-sub">less admin + windshield</div></div>
+          <div class="kpi"><div class="kpi-label">Total annual value</div><div class="kpi-value" id="b2b-s-total">$0</div><div class="kpi-sub">added revenue + savings</div></div>
+          <div class="kpi"><div class="kpi-label">SPOTIO cost / yr</div><div class="kpi-value" id="b2b-s-cost">$0</div><div class="kpi-sub" id="b2b-s-cost-detail">25 reps · $99/user/mo</div></div>
+          <div class="kpi"><div class="kpi-label">Return on SPOTIO spend</div><div class="kpi-value roi" id="b2b-roi-mult">0×</div></div>
         </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">Get My Custom ROI →</a>
+          <a class="btn btn-ghost" href="https://spotio.com/solutions/field-sales-execution-b2b/" target="_blank" rel="noopener">Explore Commercial / B2B Solutions</a>
+          <p class="cta-note">This is a directional example. Your tailored ROI — built on your real numbers — comes from a demo with a SPOTIO specialist.</p>
+        </div>
+        <p class="disclaimer">Illustrative estimate only — not a quote or guarantee. Figures use common field-sales assumptions and don't reflect any specific agreement. Your actual ROI depends on your team, market, and execution.</p>
       </div>
     </div>
   </div>
 
-  <!-- ══ COMMERCIAL TAB ══ -->
-  <div id="panel-b2b" class="tab-panel active" role="tabpanel" aria-labelledby="tab-b2b">
+  <!-- ============================ B2C PANEL ============================ -->
+  <div class="tab-panel" id="panel-b2c">
     <div class="calc-grid">
-
       <div class="card">
-        <div class="card-title">Territory Inputs</div>
-
-        <div class="field">
-          <label>Total Accounts in Territory
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Total target businesses or prospects. Pull from CRM, LinkedIn Sales Nav, or a list provider.</span></span>
-          </label>
-          <div class="input-row">
-            <input type="number" id="b-accounts" value="300" min="1" oninput="calcB()">
-            <span class="unit">accounts</span>
+        <form id="b2c-form" autocomplete="off">
+          <div class="card-title">Estimate your ROI</div>
+          <div class="section-label">Your business today</div>
+          <div class="field">
+            <label for="b2c-reps">Field reps knocking doors</label>
+            <div class="range-row"><input type="range" id="b2c-reps" min="1" max="1000" step="1" value="25"><span class="range-val"><span id="b2c-reps-out">25</span></span></div>
           </div>
-        </div>
-
-        <div class="field">
-          <label>Visits / Calls per Day
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Field B2B reps average 8–15 in-person visits/day. Inside/phone-based reps average 30–60 calls/day.</span></span>
-          </label>
-          <div class="input-row">
-            <input type="number" id="b-visits" value="12" min="1" oninput="calcB()">
-            <span class="unit">per day</span>
+          <div class="field">
+            <label for="b2c-closed">Deals closed per rep, per year <span class="hint">a typical rep</span></label>
+            <input type="number" id="b2c-closed" min="0" step="1" value="12">
           </div>
-        </div>
-
-        <div class="field">
-          <label>Base Contact Rate
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">% of accounts reached on first attempt. B2B field average is 30–50%; cold call average is 8–15%.</span></span>
-          </label>
-          <div class="range-row">
-            <input type="range" id="b-cr" min="5" max="70" value="35" oninput="syncRange('b-cr','b-cr-val','%'); calcB()">
-            <span class="range-val" id="b-cr-val">35%</span>
+          <div class="field">
+            <label for="b2c-deal">Average contract value <span class="hint">revenue per closed job</span></label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2c-deal" min="0" step="1000" value="25000"></div>
           </div>
-        </div>
-
-        <div class="field">
-          <label>Pass Decay Rate
-            <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-box">Gatekeeper familiarity reduces effective contact rate on repeat visits. 8% is a conservative baseline.</span></span>
-          </label>
-          <div class="range-row">
-            <input type="range" id="b-decay" min="0" max="25" value="8" oninput="syncRange('b-decay','b-decay-val','%'); calcB()">
-            <span class="range-val" id="b-decay-val">8%</span>
+          <div class="field">
+            <label for="b2c-price">Price per user / month <span class="hint">billed annually; adjust to your quoted rate</span></label>
+            <div class="input-row"><span class="money-sym">$</span><input type="number" id="b2c-price" min="0" step="5" value="89"><span class="unit">/user·mo</span></div>
           </div>
-        </div>
-
-        <div class="field">
-          <label>Sales Cycle Length</label>
-          <div class="input-row">
-            <input type="number" id="b-cycle" value="30" min="1" oninput="calcB()">
-            <span class="unit">days</span>
+          <div class="section-label">Your door-knocking activity</div>
+          <div class="field">
+            <label for="b2c-doorsyr">Doors knocked per rep, per year</label>
+            <input type="number" id="b2c-doorsyr" min="0" step="25" value="1575">
+            <p class="help">Not sure? Multiply <b>doors per day &times; field days per week &times; selling weeks per year</b>. Example: 15 &times; 3 &times; 35 &asymp; 1,575.</p>
+            <p class="reality" id="b2c-reality">&nbsp;</p>
           </div>
-        </div>
-
-        <hr class="divider">
-        <div class="section-label">Revenue Potential</div>
-
-        <div class="field">
-          <label>Lead → Demo Rate</label>
-          <div class="range-row">
-            <input type="range" id="b-demo" min="1" max="50" value="20" oninput="syncRange('b-demo','b-demo-val','%'); calcB()">
-            <span class="range-val" id="b-demo-val">20%</span>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Demo → Close Rate</label>
-          <div class="range-row">
-            <input type="range" id="b-close" min="1" max="60" value="25" oninput="syncRange('b-close','b-close-val','%'); calcB()">
-            <span class="range-val" id="b-close-val">25%</span>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Average Contract Value (ACV)</label>
-          <div class="input-row">
-            <span class="unit" style="min-width:16px">$</span>
-            <input type="number" id="b-acv" value="15000" min="1" step="500" oninput="calcB()">
-          </div>
-        </div>
+          <details class="adv">
+            <summary>SPOTIO impact assumptions <span class="chev">›</span></summary>
+            <div class="adv-body">
+              <p class="adv-note">SPOTIO drives results two ways: more doors per rep (less admin time) and more revenue per door (better targeting &amp; follow-up). The door boost is measured against how much you knock today, so its impact scales with your current activity.</p>
+              <div class="field">
+                <label for="b2c-addyr">Added doors per rep, per year <span class="hint">from less admin time</span></label>
+                <div class="range-row"><input type="range" id="b2c-addyr" min="0" max="800" step="10" value="210"><span class="range-val">+<span id="b2c-addyr-out">210</span></span></div>
+              </div>
+              <div class="field">
+                <label for="b2c-convlift">Better return on activity <span class="hint">more sales per door</span></label>
+                <div class="range-row"><input type="range" id="b2c-convlift" min="0" max="30" step="1" value="9"><span class="range-val">+<span id="b2c-convlift-out">9</span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="b2c-margin">Gross margin <span class="hint">set below 100% to score on profit</span></label>
+                <div class="range-row"><input type="range" id="b2c-margin" min="10" max="100" step="5" value="100"><span class="range-val"><span id="b2c-margin-out">100</span>%</span></div>
+              </div>
+            </div>
+          </details>
+        </form>
       </div>
-
-      <!-- Results -->
-      <div>
-        <div class="kpi-strip">
-          <div class="kpi">
-            <div class="kpi-label">Accounts</div>
-            <div class="kpi-value" id="b-kpi-accounts">300</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Passes to 75%</div>
-            <div class="kpi-value highlight" id="b-kpi-passes">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Total Days</div>
-            <div class="kpi-value" id="b-kpi-days">—</div>
-          </div>
-        </div>
-
-        <div class="result-badge"><span class="dot"></span><span id="b-summary">Calculating…</span></div>
-
+      <div class="results">
+        <div class="result-badge"><span class="dot"></span>Illustrative example</div>
         <div class="revenue-grid">
-          <div class="revenue-kpi">
-            <div class="kpi-label">Total Contacts (75%)</div>
-            <div class="kpi-value" id="b-kpi-contacts">—</div>
-          </div>
-          <div class="revenue-kpi">
-            <div class="kpi-label">Demos Generated</div>
-            <div class="kpi-value" id="b-kpi-demos">—</div>
-          </div>
-          <div class="revenue-kpi">
-            <div class="kpi-label">Pipeline Value</div>
-            <div class="kpi-value" id="b-kpi-revenue">—</div>
-          </div>
+          <div class="revenue-kpi"><div class="kpi-label">Added revenue / year</div><div class="kpi-value" id="b2c-hero">$0</div><div class="kpi-sub">from <span id="b2c-hero-deals">0</span> more jobs closed</div></div>
+          <div class="revenue-kpi"><div class="kpi-label">Revenue lift</div><div class="kpi-value" id="b2c-hero-lift">+0%</div><div class="kpi-sub">on your current <span id="b2c-hero-base">$0</span></div></div>
         </div>
-
-        <div class="kpi-strip" style="margin-top:0">
-          <div class="kpi">
-            <div class="kpi-label">Projected Closes</div>
-            <div class="kpi-value" id="b-kpi-closes">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Days to Revenue</div>
-            <div class="kpi-value" id="b-kpi-cycledays">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Total Revenue</div>
-            <div class="kpi-value highlight" id="b-kpi-totalrev">—</div>
-          </div>
+        <div class="section-label" style="margin-top:var(--space-2)">The full picture</div>
+        <div class="kpi-strip">
+          <div class="kpi break"><div class="kpi-label">Deals to cover SPOTIO cost</div><div class="kpi-value pos" id="b2c-s-break">0</div><div class="kpi-sub">it pays for itself, rest is upside</div></div>
+          <div class="kpi"><div class="kpi-label">More deals / yr</div><div class="kpi-value pos" id="b2c-f-win">0</div></div>
+          <div class="kpi"><div class="kpi-label">Added doors / yr</div><div class="kpi-value" id="b2c-f-door">0</div></div>
+          <div class="kpi"><div class="kpi-label">Baseline revenue / yr</div><div class="kpi-value" id="b2c-s-base">$0</div></div>
+          <div class="kpi"><div class="kpi-label">SPOTIO cost / yr</div><div class="kpi-value" id="b2c-s-cost">$0</div><div class="kpi-sub" id="b2c-s-cost-detail">25 reps · $89/user/mo</div></div>
+          <div class="kpi"><div class="kpi-label">Return on SPOTIO spend</div><div class="kpi-value roi" id="b2c-roi-mult">0×</div></div>
         </div>
-
-        <div class="passes-table-wrap">
-          <table class="passes-table" aria-label="Commercial pass-by-pass results">
-            <thead>
-              <tr>
-                <th>Pass</th>
-                <th>Days This Pass</th>
-                <th>Cum. Days</th>
-                <th>Contacts</th>
-                <th>Remaining</th>
-                <th>Total Contacted</th>
-                <th>Contact Rate</th>
-                <th>Progress</th>
-              </tr>
-            </thead>
-            <tbody id="b-tbody"></tbody>
-          </table>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">Get My Custom ROI →</a>
+          <a class="btn btn-ghost" href="https://spotio.com/solutions/field-sales-execution-b2c/" target="_blank" rel="noopener">Explore Residential / D2D Solutions</a>
+          <p class="cta-note">This is a directional example. Your tailored ROI — built on your real numbers — comes from a demo with a SPOTIO specialist.</p>
         </div>
+        <p class="disclaimer">Illustrative estimate only — not a quote or guarantee. Figures use common field-sales assumptions and don't reflect any specific agreement. Your actual ROI depends on your team, market, and execution.</p>
       </div>
     </div>
   </div>
+
+</div>
 
 <script>
-function syncRange(rangeId, valId, suffix) {
-  document.getElementById(valId).textContent = document.getElementById(rangeId).value + suffix;
-}
-function fmt(n) { return n.toLocaleString('en-US'); }
-function fmtMoney(n) {
-  if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
-  if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
-  return '$' + fmt(Math.round(n));
-}
+// ---------- shared helpers ----------
+var SROI = {
+  money: function(n){ return '$' + Math.round(n).toLocaleString('en-US'); },
+  moneyShort: function(n){
+    n = Math.round(n);
+    if(Math.abs(n) >= 1000000) return '$' + (n/1000000).toFixed(Math.abs(n)<10000000?1:0).replace(/\.0$/,'') + 'M';
+    if(Math.abs(n) >= 10000)   return '$' + Math.round(n/1000) + 'K';
+    return '$' + n.toLocaleString('en-US');
+  },
+  num: function(n,d){ d=d||0; return Number(n).toLocaleString('en-US',{maximumFractionDigits:d}); },
+  safeDiv: function(a,b){ return (!b || !isFinite(b)) ? 0 : a/b; },
+  // extra deals needed to offset the annual SPOTIO cost
+  breakevenDeals: function(v){ if(!isFinite(v) || v<=0) return '0'; return v < 1 ? '<1' : SROI.num(Math.round(v)); },
+  roiText: function(r){ return (r >= 100 ? Math.round(r) : r.toFixed(1).replace(/\.0$/,'')) + '×'; }
+};
+</script>
 
-function runPasses(totalUnits, unitsPerDay, baseCR, decayRate, targetPct) {
-  const passes = [];
-  let remaining = totalUnits;
-  let cumDays = 0;
-  let totalContacted = 0;
-  let effectiveCR = baseCR;
-  const ordinals = ['First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth'];
-  let targetPassIdx = -1;
-
-  for (let i = 0; i < 10; i++) {
-    if (remaining <= 0) break;
-    const contacts = Math.round(remaining * effectiveCR);
-    const daysThisPass = remaining / unitsPerDay;
-    cumDays += daysThisPass;
-    totalContacted += contacts;
-    remaining -= contacts;
-    const pct = totalContacted / totalUnits;
-
-    passes.push({
-      label: (ordinals[i] || 'Pass ' + (i+1)) + ' Pass',
-      daysThisPass,
-      cumDays,
-      contacts,
-      remaining: Math.max(0, Math.round(remaining)),
-      totalContacted,
-      contactRate: pct,
-    });
-
-    if (targetPassIdx < 0 && pct >= targetPct) targetPassIdx = i;
-    effectiveCR = Math.max(0.01, effectiveCR * (1 - decayRate));
-    if (remaining <= 0) break;
+<script>
+// ---------- B2B calculator ----------
+(function(){
+  var P='b2b-';
+  var $ = function(id){ return document.getElementById(P+id); };
+  var money=SROI.money, moneyShort=SROI.moneyShort, num=SROI.num, safeDiv=SROI.safeDiv;
+  var outs = {reps:'reps-out',miles:'miles-out',planhrs:'planhrs-out',lift:'lift-out',routered:'routered-out',planred:'planred-out',margin:'margin-out'};
+  function readInputs(){
+    return {
+      reps:+$('reps').value, dealsrep:Math.max(0,+$('dealsrep').value||0), deal:Math.max(0,+$('deal').value||0), price:Math.max(0,+$('price').value||0),
+      miles:+$('miles').value, hourly:Math.max(0,+$('hourly').value||0), planhrs:+$('planhrs').value,
+      lift:(+$('lift').value)/100, routered:(+$('routered').value)/100, planred:(+$('planred').value)/100,
+      fuelmile:Math.max(0,+$('fuelmile').value||0), margin:(+$('margin').value)/100
+    };
   }
-  return { passes, targetPassIdx };
-}
+  function calc(v){
+    var baseDeals = v.reps * v.dealsrep;
+    var baseRev   = baseDeals * v.deal;
+    var addedDeals = baseDeals * v.lift;
+    var addedRev   = baseRev * v.lift * v.margin;
+    var gas      = v.fuelmile * v.reps * 20 * 12 * v.routered * v.miles;
+    var planning = v.planhrs * v.hourly * v.reps * v.planred * 52;
+    var driving  = (v.miles/45) * v.reps * v.routered * v.hourly * 52;
+    var savings  = gas + planning + driving;
+    var totalValue = addedRev + savings;
+    var costYear = v.reps * v.price * 12;
+    var roi      = safeDiv(totalValue, costYear);
+    var breakeven = safeDiv(costYear, v.deal * v.margin);
+    return {reps:v.reps, price:v.price, lift:v.lift, costYear:costYear, baseRev:baseRev,
+            addedDeals:addedDeals, addedRev:addedRev, savings:savings, totalValue:totalValue, roi:roi, breakeven:breakeven};
+  }
+  function render(){
+    var v = readInputs();
+    for(var k in outs){ if($(k)) $(outs[k]).textContent = $(k).value; }
+    $('fuelmile-out').textContent = (+$('fuelmile').value).toFixed(2);
+    var r = calc(v);
+    $('hero').textContent       = moneyShort(r.addedRev);
+    $('hero-deals').textContent = num(r.addedDeals, r.addedDeals < 10 ? 1 : 0);
+    $('hero-lift').textContent  = '+' + num(v.lift*100, (v.lift*100) < 10 ? 1 : 0) + '%';
+    $('hero-base').textContent  = moneyShort(r.baseRev);
+    $('s-break').textContent    = SROI.breakevenDeals(r.breakeven);
+    $('s-deals').textContent    = num(r.addedDeals, r.addedDeals < 10 ? 1 : 0);
+    $('s-save').textContent     = moneyShort(r.savings);
+    $('s-total').textContent    = moneyShort(r.totalValue);
+    $('s-cost').textContent     = money(r.costYear);
+    $('s-cost-detail').textContent = r.reps + (r.reps===1?' rep · $':' reps · $') + num(r.price) + '/user/mo';
+    $('roi-mult').textContent   = SROI.roiText(r.roi);
+  }
+  var form = $('form');
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+  render();
+})();
+</script>
 
-function buildTable(tbodyId, passes, targetPassIdx) {
-  const tbody = document.getElementById(tbodyId);
-  tbody.innerHTML = '';
-  passes.forEach((p, i) => {
-    const tr = document.createElement('tr');
-    if (i === targetPassIdx) tr.classList.add('target-row');
-    const barW = Math.round(p.contactRate * 100);
-    tr.innerHTML = `
-      <td>${p.label}</td>
-      <td>${p.daysThisPass.toFixed(1)}</td>
-      <td>${p.cumDays.toFixed(0)}</td>
-      <td>${fmt(p.contacts)}</td>
-      <td>${fmt(p.remaining)}</td>
-      <td>${fmt(p.totalContacted)}</td>
-      <td>${Math.round(p.contactRate * 100)}%</td>
-      <td style="min-width:80px"><div class="progress-wrap"><div class="progress-bar" style="width:${barW}%"></div></div></td>`;
-    tbody.appendChild(tr);
-  });
-}
+<script>
+// ---------- B2C calculator ----------
+(function(){
+  var P='b2c-';
+  var $ = function(id){ return document.getElementById(P+id); };
+  var money=SROI.money, moneyShort=SROI.moneyShort, num=SROI.num, safeDiv=SROI.safeDiv;
+  var outs = {reps:'reps-out',addyr:'addyr-out',convlift:'convlift-out',margin:'margin-out'};
+  function readInputs(){
+    return {
+      reps:+$('reps').value, closedPerRep:Math.max(0,+$('closed').value||0), deal:Math.max(0,+$('deal').value||0), price:Math.max(0,+$('price').value||0),
+      doorsyr:Math.max(0,+$('doorsyr').value||0), addyr:+$('addyr').value,
+      convlift:(+$('convlift').value)/100, margin:(+$('margin').value)/100
+    };
+  }
+  function calc(v){
+    var doorsYear = v.doorsyr * v.reps;
+    var baseDeals = v.closedPerRep * v.reps;
+    var baseRev   = baseDeals * v.deal;
+    var dealsPerDoor = safeDiv(baseDeals, doorsYear);
+    var addedFrac  = safeDiv(v.addyr, v.doorsyr);
+    var liftFactor = (1 + addedFrac) * (1 + v.convlift) - 1;
+    var incDeals = baseDeals * liftFactor;
+    var incRev   = incDeals * v.deal * v.margin;
+    var costYear = v.reps * v.price * 12;
+    var roi      = safeDiv(incRev, costYear);
+    var breakeven = safeDiv(costYear, v.deal * v.margin);
+    var incDoorsY = v.addyr * v.reps;
+    return {reps:v.reps, price:v.price, costYear:costYear, baseRev:baseRev, incRev:incRev, incDeals:incDeals,
+            roi:roi, breakeven:breakeven, incDoorsY:incDoorsY, dealsPerDoor:dealsPerDoor, doorsYear:doorsYear, liftPct: liftFactor * 100};
+  }
+  function render(){
+    var v = readInputs();
+    for(var k in outs){ if($(k)) $(outs[k]).textContent = $(k).value; }
+    var r = calc(v);
+    if(r.dealsPerDoor > 0 && r.doorsYear > 0){
+      var perSale = Math.round(1 / r.dealsPerDoor);
+      $('reality').innerHTML = 'Reality check: <b>&asymp; 1 sale per ' + num(perSale) + ' doors</b> <span>(' + (r.dealsPerDoor*100).toFixed(r.dealsPerDoor<0.1?1:0) + '% of ' + num(r.doorsYear) + ' doors/yr)</span>';
+    } else { $('reality').innerHTML = '&nbsp;'; }
+    $('hero').textContent       = moneyShort(r.incRev);
+    $('hero-deals').textContent = num(r.incDeals, r.incDeals < 10 ? 1 : 0);
+    $('hero-lift').textContent  = '+' + num(r.liftPct, r.liftPct < 10 ? 1 : 0) + '%';
+    $('hero-base').textContent  = moneyShort(r.baseRev);
+    $('s-break').textContent    = SROI.breakevenDeals(r.breakeven);
+    $('f-win').textContent      = num(r.incDeals, r.incDeals < 10 ? 1 : 0);
+    $('f-door').textContent     = num(r.incDoorsY);
+    $('s-base').textContent     = moneyShort(r.baseRev);
+    $('s-cost').textContent     = money(r.costYear);
+    $('s-cost-detail').textContent = r.reps + (r.reps===1?' rep · $':' reps · $') + num(r.price) + '/user/mo';
+    $('roi-mult').textContent   = SROI.roiText(r.roi);
+  }
+  var form = $('form');
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+  render();
+})();
+</script>
 
-function calcR() {
-  const area   = parseFloat(document.getElementById('r-area').value)   || 0;
-  const lot    = parseFloat(document.getElementById('r-lot').value)    || 0.25;
-  const knocks = parseFloat(document.getElementById('r-knocks').value) || 50;
-  const cr     = parseFloat(document.getElementById('r-cr').value)    / 100;
-  const decay  = parseFloat(document.getElementById('r-decay').value) / 100;
-  const conv   = parseFloat(document.getElementById('r-conv').value)  / 100;
-  const deal   = parseFloat(document.getElementById('r-deal').value)  || 0;
+<script>
+// ---------- tabs + auto-resize ----------
+(function(){
+  var lastH=0;
+  function report(){
+    var h=Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    if(h && h!==lastH){ lastH=h; parent.postMessage({spotioRoiHeight:h, calc:'roi'}, '*'); }
+  }
+  var tabs = [].slice.call(document.querySelectorAll('.tab-btn'));
+  var panels = {b2b:document.getElementById('panel-b2b'), b2c:document.getElementById('panel-b2c')};
+  function activate(name){
+    if(!panels[name]) name='b2b';
+    tabs.forEach(function(b){ var on=b.getAttribute('data-tab')===name; b.classList.toggle('active',on); b.setAttribute('aria-selected',on?'true':'false'); });
+    Object.keys(panels).forEach(function(k){ panels[k].classList.toggle('active', k===name); });
+    report();
+  }
+  tabs.forEach(function(b){ b.addEventListener('click', function(){ activate(b.getAttribute('data-tab')); }); });
+  // pre-select from ?tab= (defaults to Commercial / B2B)
+  var t='';
+  try{ t=(new URLSearchParams(window.location.search).get('tab')||'').toLowerCase(); }catch(e){}
+  activate(t==='b2c'?'b2c':'b2b');
 
-  const houses = Math.round((area * 640) / lot);
-  document.getElementById('r-kpi-houses').textContent = fmt(houses);
-
-  const { passes, targetPassIdx } = runPasses(houses, knocks, cr, decay, 0.75);
-  buildTable('r-tbody', passes, targetPassIdx);
-
-  const passNum        = targetPassIdx >= 0 ? targetPassIdx + 1 : passes.length;
-  const cumDays        = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].cumDays) : Math.round(passes[passes.length-1].cumDays);
-  const totalContacted = targetPassIdx >= 0 ? passes[targetPassIdx].totalContacted : passes[passes.length-1].totalContacted;
-  const reachedPct     = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].contactRate * 100) : '—';
-
-  document.getElementById('r-kpi-passes').textContent  = passNum;
-  document.getElementById('r-kpi-days').textContent    = cumDays;
-  document.getElementById('r-summary').textContent     = `${passNum} passes · ${cumDays} days to reach ${reachedPct}% market penetration`;
-  document.getElementById('r-kpi-contacts').textContent= fmt(totalContacted);
-  document.getElementById('r-kpi-sales').textContent   = fmt(Math.round(totalContacted * conv));
-  document.getElementById('r-kpi-revenue').textContent = fmtMoney(Math.round(totalContacted * conv) * deal);
-}
-
-function calcB() {
-  const accounts  = parseFloat(document.getElementById('b-accounts').value) || 0;
-  const visits    = parseFloat(document.getElementById('b-visits').value)   || 12;
-  const cr        = parseFloat(document.getElementById('b-cr').value)      / 100;
-  const decay     = parseFloat(document.getElementById('b-decay').value)   / 100;
-  const cycle     = parseFloat(document.getElementById('b-cycle').value)   || 30;
-  const demoRate  = parseFloat(document.getElementById('b-demo').value)    / 100;
-  const closeRate = parseFloat(document.getElementById('b-close').value)   / 100;
-  const acv       = parseFloat(document.getElementById('b-acv').value)     || 0;
-
-  document.getElementById('b-kpi-accounts').textContent = fmt(accounts);
-
-  const { passes, targetPassIdx } = runPasses(accounts, visits, cr, decay, 0.75);
-  buildTable('b-tbody', passes, targetPassIdx);
-
-  const passNum        = targetPassIdx >= 0 ? targetPassIdx + 1 : passes.length;
-  const cumDays        = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].cumDays) : Math.round(passes[passes.length-1].cumDays);
-  const totalContacted = targetPassIdx >= 0 ? passes[targetPassIdx].totalContacted : passes[passes.length-1].totalContacted;
-  const reachedPct     = targetPassIdx >= 0 ? Math.round(passes[targetPassIdx].contactRate * 100) : '—';
-  const demos          = Math.round(totalContacted * demoRate);
-  const closes         = Math.round(demos * closeRate);
-
-  document.getElementById('b-kpi-passes').textContent   = passNum;
-  document.getElementById('b-kpi-days').textContent     = cumDays;
-  document.getElementById('b-summary').textContent      = `${passNum} passes · ${cumDays} days to reach ${reachedPct}% account penetration`;
-  document.getElementById('b-kpi-contacts').textContent = fmt(totalContacted);
-  document.getElementById('b-kpi-demos').textContent    = fmt(demos);
-  document.getElementById('b-kpi-revenue').textContent  = fmtMoney(totalContacted * demoRate * acv);
-  document.getElementById('b-kpi-closes').textContent   = fmt(closes);
-  document.getElementById('b-kpi-cycledays').textContent= cumDays + cycle;
-  document.getElementById('b-kpi-totalrev').textContent = fmtMoney(closes * acv);
-}
-
-function switchTab(mode) {
-  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + mode).classList.add('active');
-  document.getElementById('tab-' + mode).setAttribute('aria-selected','true');
-  document.getElementById('panel-' + mode).classList.add('active');
-}
-
-calcR();
-calcB();
+  window.addEventListener('load', report);
+  window.addEventListener('resize', report);
+  try{ new ResizeObserver(report).observe(document.body); }catch(e){}
+  setInterval(report, 700);
+})();
 </script>
 </body>
 </html>
