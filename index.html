@@ -364,12 +364,12 @@ input[type="range"] {
 
   <!-- Tab Nav -->
   <div class="tab-nav" role="tablist" aria-label="Calculator mode">
-    <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-residential" id="tab-residential" onclick="switchTab('residential')">Residential / D2D</button>
-    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-b2b" id="tab-b2b" onclick="switchTab('b2b')">Commercial / B2B</button>
+    <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-b2b" id="tab-b2b" onclick="switchTab('b2b')">Commercial / B2B</button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-residential" id="tab-residential" onclick="switchTab('residential')">Residential / D2D</button>
   </div>
 
   <!-- ══ RESIDENTIAL TAB ══ -->
-  <div id="panel-residential" class="tab-panel active" role="tabpanel" aria-labelledby="tab-residential">
+  <div id="panel-residential" class="tab-panel" role="tabpanel" aria-labelledby="tab-residential">
     <div class="calc-grid">
 
       <div class="card">
@@ -500,7 +500,7 @@ input[type="range"] {
   </div>
 
   <!-- ══ COMMERCIAL TAB ══ -->
-  <div id="panel-b2b" class="tab-panel" role="tabpanel" aria-labelledby="tab-b2b">
+  <div id="panel-b2b" class="tab-panel active" role="tabpanel" aria-labelledby="tab-b2b">
     <div class="calc-grid">
 
       <div class="card">
