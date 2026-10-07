@@ -450,7 +450,8 @@
 var SC = {
   money: function(n){
     if(!isFinite(n)) n = 0;
-    var d = (Math.abs(n) < 1000 && Math.round(n) !== Math.round(n*100)/100) ? 2 : 0;
+    // whole dollars when exact, otherwise cents (a payout of $9,999.90 must not display as $10,000)
+    var d = (Math.round(n*100) % 100 !== 0) ? 2 : 0;
     return (n < 0 ? '−$' : '$') + Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
   },
   moneyShort: function(n){
@@ -479,7 +480,7 @@ var SC = {
                steps:[money(s)+' sales × '+pct(r)+' = <b>'+money(c)+'</b>'], next:'' };
     }},
     tiered: { name:'Tiered / accelerator', formula:'Commission = (Tier 1 Sales × Tier 1 Rate) + (Tier 2 Sales × Tier 2 Rate) + …', calc:function(){
-      var s=g('t-sales'), m1=g('t1-max'), m2=Math.max(m1, g('t2-max')), r1=g('t1-rate'), r2=g('t2-rate'), r3=g('t3-rate');
+      var s=g('t-sales'), m1=g('t1-max'), m2raw=g('t2-max'), m2=Math.max(m1, m2raw), r1=g('t1-rate'), r2=g('t2-rate'), r3=g('t3-rate');
       var a1=Math.min(s,m1), a2=Math.max(0,Math.min(s,m2)-m1), a3=Math.max(0,s-m2);
       var c1=a1*r1/100, c2=a2*r2/100, c3=a3*r3/100, c=c1+c2+c3;
       var steps=['Tier 1: '+money(a1)+' × '+pct(r1)+' = <b>'+money(c1)+'</b>'];
@@ -490,6 +491,7 @@ var SC = {
       if(s<m1)      next='Sell <b>'+money(m1-s)+'</b> more to unlock the '+pct(r2)+' tier.';
       else if(s<m2) next='Sell <b>'+money(m2-s)+'</b> more to unlock the '+pct(r3)+' tier.';
       else          next='Top tier: every extra $10,000 in sales now earns <b>'+money(10000*r3/100)+'</b>.';
+      if(m2raw<m1)  next='Heads up: the Tier 2 limit is below Tier 1, so Tier 2 is skipped. Set it higher than '+money(m1)+' to use it.';
       return { h1L:'Commission earned', h1:money(c), h1S:'on '+money(s)+' in sales',
                h2L:'Effective rate', h2:pct(safeDiv(c,s)*100,1), h2S:'blended across all tiers',
                steps:steps, next:next };
@@ -540,10 +542,11 @@ var SC = {
     mult: { name:'Multiplier', formula:'Commission = (Sales × Base Rate) × Performance Multiplier', calc:function(){
       var s=g('x-sales'), q=g('x-quota'), r=g('x-rate'), a=safeDiv(s,q);
       var m=[g('x-m1'),g('x-m2'),g('x-m3'),g('x-m4'),g('x-m5')];
-      var bands=[{max:0.75,lt:true},{max:0.85},{max:1.0},{max:1.15},{max:Infinity}], nextAt=[0.75,0.86,1.01,1.16];
-      var i=0; while(i<4 && !(bands[i].lt ? a<bands[i].max : a<=bands[i].max+1e-9)) i++;
+      // each band starts at its listed threshold (75%, 86%, 101%, 116%), matching the band labels and the next-band tip
+      var nextAt=[0.75,0.86,1.01,1.16];
+      var i=0; if(q>0){ while(i<4 && a+1e-9>=nextAt[i]) i++; } else { i=2; } // no quota entered: no multiplier
       var eff=r*m[i], c=s*eff/100, pa=a*100;
-      var next='';
+      var next= q>0 ? '' : 'Enter a quota to apply the multiplier.';
       if(i<4 && q>0){ var need=Math.max(0,Math.ceil(nextAt[i]*q-s)); next='Sell <b>'+money(need)+'</b> more (reach '+pct(nextAt[i]*100,0)+' of quota) to move to the <b>'+num(m[i+1],2)+'×</b> multiplier — '+pct(r*m[i+1])+' on everything.'; }
       return { h1L:'Commission earned', h1:money(c), h1S:pct(pa,0)+' of quota',
                h2L:'Effective rate', h2:pct(eff), h2S:pct(r)+' × '+num(m[i],2)+' multiplier',
@@ -640,7 +643,7 @@ var SC = {
     el('rate-help').innerHTML = 'That’s a <b>'+pct(r.rate,2)+'</b> commission rate, and '+pct(r.rate*v.accel,2)+' on sales above quota.';
     el('h-comm').textContent = moneyShort(r.comm);
     el('h-comm-sub').textContent = pct(safeDiv(r.comm, r.rev)*100,1)+' of team revenue';
-    el('h-cos').textContent = pct(r.cos,1);
+    el('h-cos').textContent = r.rev>0 ? pct(r.cos,1) : '—';
     el('k-rev').textContent = moneyShort(r.rev);
     el('k-att').textContent = 'avg attainment '+pct(r.avgAtt,0);
     el('k-total').textContent = moneyShort(r.total);
