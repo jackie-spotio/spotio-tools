@@ -376,6 +376,16 @@
       <div class="card">
         <form id="team-form" autocomplete="off">
           <div class="card-title">Plan your comp budget</div>
+          <div class="field">
+            <label for="t-preset">Start from a plan type</label>
+            <select id="t-preset">
+              <option value="accel">Base + commission with accelerator</option>
+              <option value="base">Base + commission (flat rate)</option>
+              <option value="commission">Commission-only</option>
+              <option value="custom">Custom</option>
+            </select>
+            <p class="help">Fills in base salary, target commission and accelerator below. Change any of them to make it your own.</p>
+          </div>
           <div class="section-label">Your team &amp; plan</div>
           <div class="field">
             <label for="t-reps">Quota-carrying reps</label>
@@ -733,9 +743,28 @@ var SC = {
       'Every rep is on the plan for the full year: no ramp time, new hires or turnover.',
       'Reps fall into three groups (miss, hit, exceed), each at one average attainment, so a group can hold a fractional number of reps.',
       'Cost of sales = (base + commission'+(v.load>0?', plus '+pct(v.load*100,0)+' for benefits and payroll taxes':'')+') ÷ team revenue. It leaves out SPIFFs, bonuses and manager pay.',
-      'The stress test puts every rep at the same attainment.'
+      'The stress test puts every rep at the same attainment.',
+      'This tab covers base + commission, commission-only, flat-rate and accelerator plans. Draws and splits change when or to whom commission is paid, not the total. For gross margin, per-unit, residual or multiplier plans, model a rep in Rep Payout.'
     ].map(function(s){ return '<li>'+s+'</li>'; }).join('');
   }
+
+  // plan-type presets fill in base, target and accelerator; editing any of those switches the picker to Custom
+  var PRESETS = {
+    accel:      {base:50000, target:40000, accel:1.5},
+    base:       {base:50000, target:40000, accel:1},
+    commission: {base:0,     target:90000, accel:1}
+  };
+  function syncPreset(){
+    var cur = {base:+el('base').value||0, target:+el('target').value||0, accel:+el('accel').value};
+    var match = 'custom';
+    Object.keys(PRESETS).forEach(function(k){ var p=PRESETS[k]; if(p.base===cur.base && p.target===cur.target && Math.abs(p.accel-cur.accel)<1e-9) match=k; });
+    el('preset').value = match;
+  }
+  el('preset').addEventListener('change', function(){
+    var p = PRESETS[el('preset').value]; if(!p) return;
+    el('base').value=p.base; el('target').value=p.target; el('accel').value=p.accel;
+  });
+  ['base','target','accel'].forEach(function(k){ el(k).addEventListener('input', syncPreset); });
 
   var form = el('reps').form;
   el('miss').addEventListener('input', function(){ lastMoved='miss'; });
