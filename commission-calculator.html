@@ -101,6 +101,15 @@
   .next{font-size:0.9rem;color:var(--charcoal);background:rgba(255,195,0,0.10);border:1.5px solid var(--gold);border-radius:var(--radius-card);padding:var(--space-3) var(--space-4);line-height:1.5}
   .next:empty{display:none}
 
+  details.how{background:var(--white);border:1px solid var(--color-border);border-radius:var(--radius-card);padding:var(--space-4) var(--space-6);box-shadow:var(--shadow-sm)}
+  details.how summary{cursor:pointer;list-style:none;font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--blue);display:flex;align-items:center;justify-content:space-between}
+  details.how summary::-webkit-details-marker{display:none}
+  details.how summary .chev{transition:transform .2s;color:var(--midgrey);font-size:1.1rem}
+  details.how[open] summary .chev{transform:rotate(90deg)}
+  details.how ul{list-style:none;display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-3)}
+  details.how li{font-size:0.9rem;color:var(--charcoal);line-height:1.5;padding-left:1.4rem;position:relative}
+  details.how li::before{content:"";position:absolute;left:0.25rem;top:0.6em;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+
   .tbl-wrap{overflow-x:auto;background:var(--white);border:1px solid var(--color-border);border-radius:var(--radius-card);box-shadow:var(--shadow-sm)}
   table.tbl{width:100%;border-collapse:collapse;font-size:0.9rem;font-variant-numeric:tabular-nums;min-width:400px}
   .tbl th{text-align:right;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--midgrey);padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-border);white-space:nowrap}
@@ -171,6 +180,13 @@
             <div class="field">
               <label for="r-t-sales">Total sales <span class="hint">for the pay period</span></label>
               <div class="input-row"><span class="money-sym">$</span><input type="number" id="r-t-sales" min="0" step="5000" value="250000"></div>
+            </div>
+            <div class="field">
+              <label for="r-t-mode">How tier rates apply</label>
+              <select id="r-t-mode">
+                <option value="marginal">Only to sales within each tier</option>
+                <option value="retro">To all sales once a tier is reached</option>
+              </select>
             </div>
             <div class="section-label">Tier 1</div>
             <div class="field-pair">
@@ -343,6 +359,7 @@
         <div class="section-label" style="margin:var(--space-2) 0 0">How it's calculated</div>
         <div class="steps"><ol id="r-steps"></ol></div>
         <p class="next" id="r-next"></p>
+        <details class="how"><summary>How this is calculated <span class="chev">›</span></summary><ul id="r-how"></ul></details>
         <div class="actions">
           <a class="btn btn-primary" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">See How SPOTIO Tracks Every Sale →</a>
           <a class="btn btn-ghost article-link" href="https://spotio.com/blog/how-to-determine-typical-commission-structures-for-sales-reps/" target="_blank" rel="noopener">Compare All 12 Commission Structures</a>
@@ -381,6 +398,14 @@
             <label for="t-accel">Accelerator above quota <span class="hint">multiplier on the rate for sales past 100%</span></label>
             <div class="range-row"><input type="range" id="t-accel" min="1" max="3" step="0.1" value="1.5"><span class="range-val"><span id="t-accel-out">1.5</span>×</span></div>
           </div>
+          <div class="field">
+            <label for="t-min">Commission starts at <span class="hint">minimum % of quota before any commission is paid</span></label>
+            <div class="range-row"><input type="range" id="t-min" min="0" max="90" step="5" value="0"><span class="range-val"><span id="t-min-out">0</span>%</span></div>
+          </div>
+          <div class="field">
+            <label for="t-load">Benefits &amp; payroll taxes <span class="hint">% added on top of pay in cost of sales</span></label>
+            <div class="range-row"><input type="range" id="t-load" min="0" max="50" step="1" value="0"><span class="range-val"><span id="t-load-out">0</span>%</span></div>
+          </div>
 
           <div class="section-label">How your team performs</div>
           <div class="field">
@@ -416,7 +441,7 @@
         <div class="section-label" style="margin-top:var(--space-2)">The full picture</div>
         <div class="kpi-strip">
           <div class="kpi"><div class="kpi-label">Team revenue</div><div class="kpi-value" id="t-k-rev">$0</div><div class="kpi-sub" id="t-k-att">&nbsp;</div></div>
-          <div class="kpi"><div class="kpi-label">Total comp cost</div><div class="kpi-value" id="t-k-total">$0</div><div class="kpi-sub">base + commission</div></div>
+          <div class="kpi"><div class="kpi-label">Total comp cost</div><div class="kpi-value" id="t-k-total">$0</div><div class="kpi-sub" id="t-k-total-sub">base + commission</div></div>
           <div class="kpi"><div class="kpi-label">OTE per rep</div><div class="kpi-value roi" id="t-k-ote">$0</div><div class="kpi-sub" id="t-k-mix">&nbsp;</div></div>
         </div>
         <div class="section-label" style="margin:var(--space-2) 0 0">By performance group</div>
@@ -433,12 +458,13 @@
             <tbody id="t-scen"></tbody>
           </table>
         </div>
+        <details class="how"><summary>How this is calculated <span class="chev">›</span></summary><ul id="t-how"></ul></details>
         <div class="actions">
           <a class="btn btn-primary" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">Get a Demo →</a>
           <a class="btn btn-ghost article-link" href="https://spotio.com/blog/how-to-determine-typical-commission-structures-for-sales-reps/" target="_blank" rel="noopener">Compare All 12 Commission Structures</a>
           <p class="cta-note">See the field activity behind every payout — visits, appointments and closed deals — in real time.</p>
         </div>
-        <p class="disclaimer">Planning estimate only — not payroll, tax or legal advice. Assumes uncapped commission paid on revenue, with the accelerator applied to sales above quota.</p>
+        <p class="disclaimer">Planning estimate only — not payroll, tax or legal advice.</p>
       </div>
     </div>
   </div>
@@ -479,21 +505,36 @@ var SC = {
                h2L:'Effective rate', h2:pct(r), h2S:'of every sales dollar',
                steps:[money(s)+' sales × '+pct(r)+' = <b>'+money(c)+'</b>'], next:'' };
     }},
-    tiered: { name:'Tiered / accelerator', formula:'Commission = (Tier 1 Sales × Tier 1 Rate) + (Tier 2 Sales × Tier 2 Rate) + …', calc:function(){
+    tiered: { name:'Tiered / accelerator',
+      formula:function(){ return el('t-mode').value==='retro' ? 'Commission = All Sales × Rate of the Highest Tier Reached' : 'Commission = (Tier 1 Sales × Tier 1 Rate) + (Tier 2 Sales × Tier 2 Rate) + …'; },
+      how:function(){ return [ el('t-mode').value==='retro'
+          ? 'Once sales pass a tier’s limit, that tier’s rate applies to all sales in the period (“retroactive” tiers). Crossing a limit can cause a large jump in pay.'
+          : 'Each rate applies only to the sales inside its tier (“marginal” tiers), so crossing a limit never lowers or jumps pay on earlier sales.',
+        'A tier starts on the first dollar above the previous tier’s limit. Tier 3 covers everything above the Tier 2 limit.' ]; },
+      calc:function(){
       var s=g('t-sales'), m1=g('t1-max'), m2raw=g('t2-max'), m2=Math.max(m1, m2raw), r1=g('t1-rate'), r2=g('t2-rate'), r3=g('t3-rate');
-      var a1=Math.min(s,m1), a2=Math.max(0,Math.min(s,m2)-m1), a3=Math.max(0,s-m2);
-      var c1=a1*r1/100, c2=a2*r2/100, c3=a3*r3/100, c=c1+c2+c3;
-      var steps=['Tier 1: '+money(a1)+' × '+pct(r1)+' = <b>'+money(c1)+'</b>'];
-      if(a2>0) steps.push('Tier 2: '+money(a2)+' × '+pct(r2)+' = <b>'+money(c2)+'</b>');
-      if(a3>0) steps.push('Tier 3: '+money(a3)+' × '+pct(r3)+' = <b>'+money(c3)+'</b>');
-      if(steps.length>1) steps.push('Total: <b>'+money(c)+'</b>');
-      var next;
-      if(s<m1)      next='Sell <b>'+money(m1-s)+'</b> more to unlock the '+pct(r2)+' tier.';
-      else if(s<m2) next='Sell <b>'+money(m2-s)+'</b> more to unlock the '+pct(r3)+' tier.';
-      else          next='Top tier: every extra $10,000 in sales now earns <b>'+money(10000*r3/100)+'</b>.';
+      var retro = el('t-mode').value==='retro', c, steps, next;
+      if(retro){
+        var tierNo = s>m2 ? 3 : (s>m1 ? 2 : 1), rate = [r1,r2,r3][tierNo-1];
+        c = s*rate/100;
+        steps = [money(s)+' in sales reaches <b>Tier '+tierNo+'</b>', 'All '+money(s)+' × '+pct(rate)+' = <b>'+money(c)+'</b>'];
+        if(tierNo===1)      next='Pass '+money(m1)+' in sales (another <b>'+money(m1-s)+'</b>) and all sales earn '+pct(r2)+'.';
+        else if(tierNo===2) next='Pass '+money(m2)+' in sales (another <b>'+money(m2-s)+'</b>) and all sales earn '+pct(r3)+'.';
+        else                next='Top tier: every extra $10,000 in sales now earns <b>'+money(10000*r3/100)+'</b>.';
+      } else {
+        var a1=Math.min(s,m1), a2=Math.max(0,Math.min(s,m2)-m1), a3=Math.max(0,s-m2);
+        var c1=a1*r1/100, c2=a2*r2/100, c3=a3*r3/100; c=c1+c2+c3;
+        steps=['Tier 1: '+money(a1)+' × '+pct(r1)+' = <b>'+money(c1)+'</b>'];
+        if(a2>0) steps.push('Tier 2: '+money(a2)+' × '+pct(r2)+' = <b>'+money(c2)+'</b>');
+        if(a3>0) steps.push('Tier 3: '+money(a3)+' × '+pct(r3)+' = <b>'+money(c3)+'</b>');
+        if(steps.length>1) steps.push('Total: <b>'+money(c)+'</b>');
+        if(s<m1)      next='Sell <b>'+money(m1-s)+'</b> more to unlock the '+pct(r2)+' tier.';
+        else if(s<m2) next='Sell <b>'+money(m2-s)+'</b> more to unlock the '+pct(r3)+' tier.';
+        else          next='Top tier: every extra $10,000 in sales now earns <b>'+money(10000*r3/100)+'</b>.';
+      }
       if(m2raw<m1)  next='Heads up: the Tier 2 limit is below Tier 1, so Tier 2 is skipped. Set it higher than '+money(m1)+' to use it.';
       return { h1L:'Commission earned', h1:money(c), h1S:'on '+money(s)+' in sales',
-               h2L:'Effective rate', h2:pct(safeDiv(c,s)*100,1), h2S:'blended across all tiers',
+               h2L:'Effective rate', h2:pct(safeDiv(c,s)*100,1), h2S: retro ? 'one rate on all sales' : 'blended across all tiers',
                steps:steps, next:next };
     }},
     base: { name:'Base salary + commission', formula:'Total Pay = Base Salary + (Sales × Commission Rate)', calc:function(){
@@ -567,13 +608,34 @@ var SC = {
     }}
   };
 
+  // plain-language rules shown under "How this is calculated" (tiered builds its own, since it depends on the tier mode)
+  var HOW = {
+    flat:    ['Commission is one fixed percentage of all sales in the period.'],
+    base:    ['Base salary is paid regardless of sales; enter it for the same period as the sales figure.'],
+    margin:  ['Gross margin = sales minus direct costs. If costs exceed the sale, commission is $0, never negative.'],
+    unit:    ['Every unit pays the same flat amount, whatever its price.'],
+    split:   ['The deal’s commission is split between two people, and the two shares add up to 100%.'],
+    draw:    function(){ return [ el('d-type').value==='rec'
+               ? 'Recoverable draw: commission first repays any draw still owed. If what’s left is below the draw, you’re paid the draw and the shortfall carries forward.'
+               : 'Non-recoverable draw: you’re paid the greater of the draw or your commission. The company absorbs any shortfall and never recovers it.' ]; },
+    mult:    ['Once attainment reaches a band, its multiplier applies to all sales in the period, not only to sales above the threshold.',
+              'Bands start at 75%, 86%, 101% and 116% of quota. With no quota entered, no multiplier is applied.'],
+    pool:    ['The pool is split equally among reps, regardless of who sold what.'],
+    residual:['The annual figure assumes every account stays active for all 12 months, with no churn or price changes.']
+  };
+  var GENERAL = ['Results are gross pay for the period, before taxes and withholding.',
+                 'No caps, clawbacks or chargebacks are applied unless the structure includes them.'];
+
   function render(){
     var key = el('plan').value; if(!PLANS[key]) key='flat';
     var P = PLANS[key];
+    var how = P.how || HOW[key] || [];
+    if(typeof how==='function') how = how();
+    el('how').innerHTML = how.concat(GENERAL).map(function(s){ return '<li>'+s+'</li>'; }).join('');
     [].forEach.call(document.querySelectorAll('#panel-rep .plan-fields'), function(f){ f.classList.toggle('active', f.getAttribute('data-plan')===key); });
     el('d-prior-wrap').style.display = el('d-type').value==='rec' ? '' : 'none';
     el('s-share-out').textContent = el('s-share').value;
-    el('formula').textContent = P.formula;
+    el('formula').textContent = typeof P.formula==='function' ? P.formula() : P.formula;
     el('badge').textContent = P.name;
     var o = P.calc();
     el('h1-label').textContent = o.h1L; el('h1').textContent = o.h1; el('h1-sub').textContent = o.h1S;
@@ -598,7 +660,7 @@ var SC = {
 (function(){
   var money=SC.money, moneyShort=SC.moneyShort, pct=SC.pct, num=SC.num, safeDiv=SC.safeDiv;
   var el = function(id){ return document.getElementById('t-'+id); };
-  var outs = ['reps','accel','miss','exceed','missatt','exceedatt'];
+  var outs = ['reps','accel','min','load','miss','exceed','missatt','exceedatt'];
   var lastMoved = 'exceed';
 
   function readInputs(){
@@ -608,12 +670,17 @@ var SC = {
     return {
       reps:+el('reps').value, quota:Math.max(0,+el('quota').value||0), base:Math.max(0,+el('base').value||0),
       target:Math.max(0,+el('target').value||0), accel:+el('accel').value,
+      min:+el('min').value/100, load:+el('load').value/100,
       miss:miss/100, exceed:exc/100, hit:(100-miss-exc)/100,
       missAtt:+el('missatt').value/100, exceedAtt:+el('exceedatt').value/100
     };
   }
-  // commission for one rep at attainment a (1 = 100% of quota); rate x accelerator above quota, uncapped
-  function commAt(v, a){ return a<=1 ? v.target*a : v.target + v.target*v.accel*(a-1); }
+  // commission for one rep at attainment a (1 = 100% of quota): nothing below the minimum, then from the first dollar;
+  // rate x accelerator above quota, uncapped
+  function commAt(v, a){
+    if(a+1e-9 < v.min) return 0;
+    return a<=1 ? v.target*a : v.target + v.target*v.accel*(a-1);
+  }
 
   function calc(v){
     var groups = [
@@ -629,7 +696,7 @@ var SC = {
       rev  += gp.n * v.quota * gp.att;
       comm += gp.comm;
     });
-    var baseTotal = v.reps*v.base, total = baseTotal+comm;
+    var baseTotal = v.reps*v.base, total = (baseTotal+comm)*(1+v.load);
     return {groups:groups, rev:rev, comm:comm, total:total, cos:safeDiv(total,rev)*100,
             avgAtt:safeDiv(rev, v.reps*v.quota)*100, ote:v.base+v.target, rate:safeDiv(v.target,v.quota)*100};
   }
@@ -647,15 +714,27 @@ var SC = {
     el('k-rev').textContent = moneyShort(r.rev);
     el('k-att').textContent = 'avg attainment '+pct(r.avgAtt,0);
     el('k-total').textContent = moneyShort(r.total);
+    el('k-total-sub').textContent = v.load>0 ? 'base + commission + '+pct(v.load*100,0)+' benefits & taxes' : 'base + commission';
     el('k-ote').textContent = moneyShort(r.ote);
     el('k-mix').textContent = pct(safeDiv(v.base,r.ote)*100,0)+' / '+pct(safeDiv(v.target,r.ote)*100,0)+' base / variable';
     el('groups').innerHTML = r.groups.map(function(gp){
       return '<tr><td>'+gp.name+'</td><td>'+num(gp.n, gp.n%1?1:0)+'</td><td>'+pct(gp.att*100,0)+'</td><td>'+money(gp.payEach)+'</td><td>'+moneyShort(gp.comm)+'</td></tr>';
     }).join('');
     el('scen').innerHTML = [0.75,1,1.25].map(function(a){
-      var rv=v.reps*v.quota*a, cm=v.reps*commAt(v,a), cs=safeDiv(v.reps*v.base+cm, rv)*100;
-      return '<tr'+(a===1?' class="hl"':'')+'><td>'+pct(a*100,0)+' of quota</td><td>'+moneyShort(rv)+'</td><td>'+moneyShort(cm)+'</td><td>'+pct(cs,1)+'</td></tr>';
+      var rv=v.reps*v.quota*a, cm=v.reps*commAt(v,a), cs=safeDiv((v.reps*v.base+cm)*(1+v.load), rv)*100;
+      return '<tr'+(a===1?' class="hl"':'')+'><td>'+pct(a*100,0)+' of quota</td><td>'+moneyShort(rv)+'</td><td>'+moneyShort(cm)+'</td><td>'+(rv>0?pct(cs,1):'—')+'</td></tr>';
     }).join('');
+    el('how').innerHTML = [
+      'Commission rate = target commission ÷ quota, paid on revenue.',
+      v.min>0 ? 'Reps below '+pct(v.min*100,0)+' of quota earn no commission. At or above it, commission is paid from the first dollar, in proportion to attainment.'
+              : 'Commission is paid from the first dollar, in proportion to attainment, with no minimum.',
+      'Above quota, the rate is multiplied by the accelerator. Commission is uncapped.',
+      'Team revenue = each rep’s quota × their attainment.',
+      'Every rep is on the plan for the full year: no ramp time, new hires or turnover.',
+      'Reps fall into three groups (miss, hit, exceed), each at one average attainment, so a group can hold a fractional number of reps.',
+      'Cost of sales = (base + commission'+(v.load>0?', plus '+pct(v.load*100,0)+' for benefits and payroll taxes':'')+') ÷ team revenue. It leaves out SPIFFs, bonuses and manager pay.',
+      'The stress test puts every rep at the same attainment.'
+    ].map(function(s){ return '<li>'+s+'</li>'; }).join('');
   }
 
   var form = el('reps').form;
