@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cost of Inaction Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap');
+  :root{
+    --gold:#FFC300; --charcoal:#28272D; --blue:#2532A2; --lightgrey:#F4F6F7; --midgrey:#69686C;
+    --white:#FFFFFF; --green:#428960; --error:#DA747B; --warm:#FAF9F5;
+    --color-bg:var(--lightgrey); --color-surface:var(--white); --color-border:#E2E5E7;
+    --color-text:var(--charcoal); --color-muted:var(--midgrey); --color-faint:var(--midgrey);
+    --color-primary:var(--charcoal); --color-accent:var(--gold); --color-label:var(--blue);
+    --radius-btn:9px; --radius-card:10px; --radius-input:10px; --radius-pill:999px; --radius-tag:6px;
+    --space-1:0.25rem; --space-2:0.5rem; --space-3:0.75rem; --space-4:1rem; --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem;
+    --shadow-sm:0 1px 3px rgba(40,39,45,0.08); --shadow-md:0 4px 12px rgba(40,39,45,0.10);
+    --font:'Archivo','Helvetica Neue',Arial,sans-serif; --transition:180ms cubic-bezier(0.16,1,0.3,1);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-font-smoothing:antialiased}
+  body{font-family:var(--font);font-size:16px;color:var(--color-text);background:var(--color-bg);line-height:1.6}
+  .wrap{max-width:1000px;margin:0 auto;padding:var(--space-6) var(--space-4) 3rem}
+  img,svg{display:block;max-width:100%}
+  button,input,select{font:inherit;color:inherit}
+  h1,h2,h3,h4,h5{line-height:1.2}
+
+  .calc-grid{display:grid;grid-template-columns:360px 1fr;gap:var(--space-6);align-items:start}
+  @media (max-width:760px){.calc-grid{grid-template-columns:1fr}}
+
+  .card{background:var(--color-surface);border-radius:var(--radius-card);padding:var(--space-6);box-shadow:var(--shadow-sm);border:1px solid var(--color-border)}
+  .card-title{font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--blue);margin-bottom:var(--space-5);padding-bottom:var(--space-3);border-bottom:2px solid var(--gold);display:inline-block}
+  .section-label{font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--blue);margin:var(--space-5) 0 var(--space-3)}
+
+  .field{margin-bottom:var(--space-4)}
+  label{display:block;font-size:0.95rem;font-weight:700;color:var(--charcoal);margin-bottom:var(--space-2)}
+  label .hint{font-weight:400;color:var(--midgrey);font-size:0.85rem;display:block;margin-top:1px}
+  .help{font-size:0.85rem;color:var(--midgrey);line-height:1.5;margin-top:var(--space-2)}
+  .help b{color:var(--charcoal)}
+  .input-row{display:flex;align-items:center;gap:var(--space-2)}
+  .money-sym{font-size:1.05rem;font-weight:700;color:var(--midgrey)}
+  .unit{font-size:0.875rem;color:var(--midgrey);white-space:nowrap}
+  input[type="number"]{width:100%;border:1.5px solid var(--color-border);border-radius:var(--radius-input);padding:var(--space-3) var(--space-3);font-size:1.05rem;background:var(--lightgrey);color:var(--charcoal);transition:border-color var(--transition);-moz-appearance:textfield}
+  input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none}
+  input[type="number"]:focus{outline:none;border-color:var(--gold)}
+  .range-row{display:flex;align-items:center;gap:var(--space-3)}
+  input[type="range"]{width:100%;height:4px;border-radius:99px;accent-color:var(--blue);cursor:pointer;border:none;background:var(--lightgrey);padding:0}
+  .range-val{font-size:1.05rem;font-weight:700;color:var(--blue);min-width:56px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+  details.adv{margin-top:var(--space-5);border-top:1px solid var(--color-border);padding-top:var(--space-4)}
+  details.adv summary{cursor:pointer;list-style:none;font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--blue);display:flex;align-items:center;justify-content:space-between}
+  details.adv summary::-webkit-details-marker{display:none}
+  details.adv summary .chev{transition:transform .2s;color:var(--midgrey);font-size:1.1rem}
+  details.adv[open] summary .chev{transform:rotate(90deg)}
+  .adv-note{font-size:0.85rem;color:var(--midgrey);line-height:1.5;margin:var(--space-3) 0 var(--space-4)}
+  .adv-body .field:last-child{margin-bottom:0}
+
+  .results{display:flex;flex-direction:column;gap:var(--space-4)}
+  .result-badge{display:inline-flex;align-items:center;gap:var(--space-2);background:rgba(37,50,162,0.08);border:1px solid rgba(37,50,162,0.22);border-radius:var(--radius-pill);padding:var(--space-2) var(--space-4);font-size:0.9rem;font-weight:700;color:var(--blue);align-self:flex-start}
+  .result-badge .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);flex-shrink:0}
+
+  .revenue-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+  @media (max-width:420px){.revenue-grid{grid-template-columns:1fr}}
+  .revenue-kpi{background:var(--charcoal);border-radius:var(--radius-card);padding:var(--space-6);color:var(--white);display:flex;flex-direction:column;justify-content:center;min-height:170px}
+  .revenue-kpi .kpi-label{font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.72);margin-bottom:var(--space-3)}
+  .revenue-kpi .kpi-value{color:var(--gold);font-size:2.9rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .revenue-kpi .kpi-sub{font-size:0.85rem;color:rgba(255,255,255,0.68);margin-top:var(--space-3)}
+
+  .kpi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3)}
+  @media (max-width:560px){.kpi-strip{grid-template-columns:1fr 1fr}}
+  .kpi{background:var(--color-surface);border-radius:var(--radius-card);padding:var(--space-5) var(--space-4);border:1px solid var(--color-border);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;justify-content:center;min-height:104px}
+  .kpi.flag{border:1.5px solid var(--gold);background:rgba(255,195,0,0.06)}
+  .kpi-label{font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--midgrey);margin-bottom:var(--space-2)}
+  .kpi .kpi-value{font-size:1.7rem;font-weight:700;color:var(--charcoal);line-height:1.05;font-variant-numeric:tabular-nums}
+  .kpi-sub{font-size:0.8125rem;color:var(--midgrey);margin-top:3px}
+
+  .actions{display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-2)}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:var(--radius-btn);font-weight:700;font-size:1.05rem;text-decoration:none;transition:all var(--transition);border:1px solid transparent}
+  .btn-primary{background:var(--gold);color:var(--charcoal);border-color:var(--gold)}
+  .btn-primary:hover{background:var(--charcoal);color:var(--gold);border-color:var(--gold)}
+  .btn-ghost{background:transparent;color:var(--charcoal);border:1px solid var(--gold)}
+  .btn-ghost:hover{background:rgba(255,195,0,0.10)}
+  .cta-note{font-size:0.85rem;color:var(--midgrey);text-align:center;margin-top:var(--space-1);line-height:1.5}
+  .disclaimer{font-size:0.85rem;color:var(--midgrey);line-height:1.5;max-width:64ch;margin-top:var(--space-1)}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="cost-of-inaction">
+  <div class="calc-grid">
+    <div class="card">
+      <form id="coi-form" autocomplete="off">
+        <div class="card-title">Your team today</div>
+        <div class="section-label">Your sales team</div>
+        <div class="field">
+          <label for="coi-reps">Field sales reps</label>
+          <div class="range-row"><input type="range" id="coi-reps" min="1" max="1000" step="1" value="25"><span class="range-val"><span id="coi-reps-out">25</span></span></div>
+        </div>
+        <div class="field">
+          <label for="coi-dealsrep">Deals closed per rep, per year <span class="hint">a typical rep</span></label>
+          <input type="number" id="coi-dealsrep" min="0" step="1" value="20">
+        </div>
+        <div class="field">
+          <label for="coi-deal">Average deal size <span class="hint">revenue per closed deal</span></label>
+          <div class="input-row"><span class="money-sym">$</span><input type="number" id="coi-deal" min="0" step="1000" value="15000"></div>
+        </div>
+
+        <div class="section-label">Time lost to manual work</div>
+        <div class="field">
+          <label for="coi-adminhrs">Hours per week per rep on manual logging &amp; admin</label>
+          <div class="range-row"><input type="range" id="coi-adminhrs" min="0" max="30" step="1" value="8"><span class="range-val"><span id="coi-adminhrs-out">8</span> hrs</span></div>
+          <p class="help">Field reps lose roughly a <b>21% admin tax</b> — about <b>8 hours a week</b> on data entry, route planning, and reporting instead of selling.</p>
+        </div>
+        <div class="field">
+          <label for="coi-hourly">Fully-loaded cost per rep, per hour</label>
+          <div class="input-row"><span class="money-sym">$</span><input type="number" id="coi-hourly" min="0" step="5" value="40"><span class="unit">/hr</span></div>
+          <p class="help">Base pay <b>plus</b> benefits, taxes &amp; overhead, divided by working hours. Quick estimate: annual salary &divide; ~2,000 hours, then add ~30%. (e.g., a $60K rep &asymp; <b>$40/hr</b> loaded.)</p>
+        </div>
+
+        <details class="adv">
+          <summary>Impact assumptions <span class="chev">›</span></summary>
+          <div class="adv-body">
+            <p class="adv-note">Two separate streams, so nothing is double-counted: the <b>revenue left on the table</b> is the lift you're missing from better targeting &amp; follow-up; the <b>recoverable admin time</b> is the share of manual work a field-sales platform automates away. Set them to your own.</p>
+            <div class="field">
+              <label for="coi-missed">Revenue you're leaving on the table <span class="hint">lift you're not getting today</span></label>
+              <div class="range-row"><input type="range" id="coi-missed" min="0" max="40" step="1" value="23"><span class="range-val"><span id="coi-missed-out">23</span>%</span></div>
+            </div>
+            <div class="field">
+              <label for="coi-recover">Share of admin time that's recoverable <span class="hint">what automation gives back</span></label>
+              <div class="range-row"><input type="range" id="coi-recover" min="0" max="90" step="5" value="75"><span class="range-val"><span id="coi-recover-out">75</span>%</span></div>
+            </div>
+            <div class="field">
+              <label for="coi-margin">Gross margin <span class="hint">set below 100% to score on profit</span></label>
+              <div class="range-row"><input type="range" id="coi-margin" min="10" max="100" step="5" value="100"><span class="range-val"><span id="coi-margin-out">100</span>%</span></div>
+            </div>
+          </div>
+        </details>
+      </form>
+    </div>
+
+    <div class="results">
+      <div class="result-badge"><span class="dot"></span>Illustrative estimate</div>
+      <div class="revenue-grid">
+        <div class="revenue-kpi"><div class="kpi-label">Cost of inaction / year</div><div class="kpi-value" id="coi-hero">$0</div><div class="kpi-sub">lost revenue + wasted admin time</div></div>
+        <div class="revenue-kpi"><div class="kpi-label">Over the next 5 years</div><div class="kpi-value" id="coi-hero-5yr">$0</div><div class="kpi-sub">if nothing changes</div></div>
+      </div>
+      <div class="section-label" style="margin-top:var(--space-2)">Where it's bleeding</div>
+      <div class="kpi-strip">
+        <div class="kpi flag"><div class="kpi-label">Revenue left on the table / yr</div><div class="kpi-value" id="coi-t-revlost">$0</div><div class="kpi-sub">deals you're not closing</div></div>
+        <div class="kpi"><div class="kpi-label">Wasted admin cost / yr</div><div class="kpi-value" id="coi-t-admincost">$0</div><div class="kpi-sub">paid hours not selling</div></div>
+        <div class="kpi"><div class="kpi-label">Rep-hours lost / yr</div><div class="kpi-value" id="coi-t-hours">0</div><div class="kpi-sub">across the whole team</div></div>
+        <div class="kpi"><div class="kpi-label">Selling days lost / yr</div><div class="kpi-value" id="coi-t-days">0</div><div class="kpi-sub">8-hour days on admin</div></div>
+        <div class="kpi"><div class="kpi-label">Cost per rep / yr</div><div class="kpi-value" id="coi-t-perrep">$0</div></div>
+        <div class="kpi"><div class="kpi-label">Lost every month</div><div class="kpi-value" id="coi-t-month">$0</div><div class="kpi-sub">every month you wait</div></div>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://spotio.com/request-a-demo/" target="_blank" rel="noopener">See how SPOTIO closes this gap →</a>
+        <a class="btn btn-ghost" href="https://spotio.com/solutions/" target="_blank" rel="noopener">Talk to Sales</a>
+        <p class="cta-note">This is a directional estimate. Your real number — built on your team's actual activity — comes from a demo with a SPOTIO specialist.</p>
+      </div>
+      <p class="disclaimer">Illustrative estimate only — not a quote or guarantee. Figures use common field-sales assumptions and don't reflect any specific agreement. Your actual cost depends on your team, market, and execution.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+var CF = {
+  money: function(n){ return '$' + Math.round(n).toLocaleString('en-US'); },
+  moneyShort: function(n){
+    n = Math.round(n);
+    if(Math.abs(n) >= 1000000) return '$' + (n/1000000).toFixed(Math.abs(n)<10000000?1:0).replace(/\.0$/,'') + 'M';
+    if(Math.abs(n) >= 10000)   return '$' + Math.round(n/1000) + 'K';
+    return '$' + n.toLocaleString('en-US');
+  },
+  num: function(n,d){ d=d||0; return Number(n).toLocaleString('en-US',{maximumFractionDigits:d}); }
+};
+(function(){
+  var $ = function(id){ return document.getElementById('coi-'+id); };
+  var outs = {reps:'reps-out',adminhrs:'adminhrs-out',missed:'missed-out',recover:'recover-out',margin:'margin-out'};
+  function readInputs(){
+    return {
+      reps:+$('reps').value, dealsrep:Math.max(0,+$('dealsrep').value||0), deal:Math.max(0,+$('deal').value||0),
+      adminHrs:+$('adminhrs').value, hourly:Math.max(0,+$('hourly').value||0),
+      missed:(+$('missed').value)/100, recover:(+$('recover').value)/100, margin:(+$('margin').value)/100
+    };
+  }
+  function calc(v){
+    var adminHoursYear   = v.adminHrs * v.reps * 52;
+    var recoverableHours = adminHoursYear * v.recover;
+    var wastedAdminCost  = recoverableHours * v.hourly;
+    var baseRev          = v.reps * v.dealsrep * v.deal;
+    var missedRevenue    = baseRev * v.missed * v.margin;
+    var coi              = wastedAdminCost + missedRevenue;
+    return {
+      coi:coi, fiveYr:coi*5, missedRevenue:missedRevenue, wastedAdminCost:wastedAdminCost,
+      recoverableHours:recoverableHours, sellingDays:recoverableHours/8,
+      perRep:v.reps>0?coi/v.reps:0, monthly:coi/12
+    };
+  }
+  function render(){
+    var v = readInputs();
+    for(var k in outs){ if($(k)) $(outs[k]).textContent = $(k).value; }
+    var r = calc(v);
+    $('hero').textContent       = CF.moneyShort(r.coi);
+    $('hero-5yr').textContent   = CF.moneyShort(r.fiveYr);
+    $('t-revlost').textContent  = CF.moneyShort(r.missedRevenue);
+    $('t-admincost').textContent= CF.moneyShort(r.wastedAdminCost);
+    $('t-hours').textContent    = CF.num(r.recoverableHours);
+    $('t-days').textContent     = CF.num(r.sellingDays);
+    $('t-perrep').textContent   = CF.money(r.perRep);
+    $('t-month').textContent    = CF.moneyShort(r.monthly);
+  }
+  var form = $('form');
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+  render();
+})();
+
+(function(){
+  var lastH=0;
+  function report(){
+    var h=Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    if(h && h!==lastH){ lastH=h; parent.postMessage({spotioRoiHeight:h, calc:'coi'}, '*'); }
+  }
+  window.addEventListener('load', report);
+  window.addEventListener('resize', report);
+  try{ new ResizeObserver(report).observe(document.body); }catch(e){}
+  setInterval(report, 700);
+})();
+</script>
+</body>
+</html>
